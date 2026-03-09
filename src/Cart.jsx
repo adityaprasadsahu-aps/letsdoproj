@@ -1,57 +1,11 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trash2, ArrowLeft, Plus, Minus } from 'lucide-react';
+import { useCart } from './CartContext';
 import './cart.css';
 
 function Cart() {
   const navigate = useNavigate();
-  
-  // Sample cart items - will be replaced with MongoDB later
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: 'Classic Minimalist',
-      series: 'Classic Series',
-      price: 299.99,
-      quantity: 1,
-      image: '/Watch_Png/Classic Series/Classic1.png'
-    },
-    {
-      id: 2,
-      name: 'Explorer Adventurer',
-      series: 'Explorer Series',
-      price: 399.99,
-      quantity: 2,
-      image: '/Watch_Png/Explorer Series/Explorer2.png'
-    },
-    {
-      id: 3,
-      name: 'Luxury Prestige',
-      series: 'Luxury Collection',
-      price: 899.99,
-      quantity: 1,
-      image: '/Watch_Png/Luxury Collection/Luxury1.png'
-    }
-  ]);
-
-  // Increase quantity
-  const increaseQuantity = (id) => {
-    setCartItems(cartItems.map(item =>
-      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-    ));
-  };
-
-  // Decrease quantity
-  const decreaseQuantity = (id) => {
-    setCartItems(cartItems.map(item =>
-      item.id === id && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
-    ));
-  };
-
-  // Remove item from cart
-  const removeItem = (id) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
-  };
+  const { cartItems, removeItem, increaseQuantity, decreaseQuantity } = useCart();
 
   // Calculate subtotal
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -110,14 +64,14 @@ function Cart() {
                     <div className="quantity-control">
                       <button
                         className="qty-btn"
-                        onClick={() => decreaseQuantity(item.id)}
+                        onClick={() => decreaseQuantity(item.id, item.series)}
                       >
                         <Minus size={16} />
                       </button>
                       <span className="qty-display">{item.quantity}</span>
                       <button
                         className="qty-btn"
-                        onClick={() => increaseQuantity(item.id)}
+                        onClick={() => increaseQuantity(item.id, item.series)}
                       >
                         <Plus size={16} />
                       </button>
@@ -127,7 +81,7 @@ function Cart() {
                     </div>
                     <button
                       className="remove-btn"
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => removeItem(item.id, item.series)}
                       title="Remove from cart"
                     >
                       <Trash2 size={20} />

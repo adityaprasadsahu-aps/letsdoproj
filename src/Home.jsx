@@ -4,6 +4,7 @@ import { Search, User, ShoppingBag } from 'lucide-react';
 import './App.css';
 import SlidingDashboard from './SlidingDashboard.jsx';
 import CountdownTimer from './CountdownTimer.jsx';
+import { useCart } from './CartContext';
 
 function Home() {
     const navigate = useNavigate();

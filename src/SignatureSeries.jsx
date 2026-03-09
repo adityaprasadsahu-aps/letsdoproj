@@ -1,16 +1,19 @@
 import { useNavigate } from 'react-router-dom';
+import { ShoppingBag } from 'lucide-react';
+import { useCart } from './CartContext';
 import './collectionDetail.css';
 
 function SignatureSeries() {
   const navigate = useNavigate();
-  
+  const { addToCart, totalItems } = useCart();
+
   const watches = [
-    { id: 1, name: 'Signature Prestige', image: '/Watch_Png/Signature Series/Signature1.png' },
-    { id: 2, name: 'Signature Metro', image: '/Watch_Png/Signature Series/Signature2.png' },
-    { id: 3, name: 'Signature Elite', image: '/Watch_Png/Signature Series/Signature3.png' },
-    { id: 4, name: 'Signature Royal', image: '/Watch_Png/Signature Series/Signature4.png' },
-    { id: 5, name: 'Signature Prodigy', image: '/Watch_Png/Signature Series/Signature5.png' },
-    { id: 6, name: 'Signature Legacy', image: '/Watch_Png/Signature Series/Signature6.png' },
+    { id: 1, name: 'Signature Prestige', image: '/Watch_Png/Signature Series/Signature1.png', price: 699.99, series: 'Signature Series' },
+    { id: 2, name: 'Signature Metro', image: '/Watch_Png/Signature Series/Signature2.png', price: 749.99, series: 'Signature Series' },
+    { id: 3, name: 'Signature Elite', image: '/Watch_Png/Signature Series/Signature3.png', price: 799.99, series: 'Signature Series' },
+    { id: 4, name: 'Signature Royal', image: '/Watch_Png/Signature Series/Signature4.png', price: 849.99, series: 'Signature Series' },
+    { id: 5, name: 'Signature Prodigy', image: '/Watch_Png/Signature Series/Signature5.png', price: 899.99, series: 'Signature Series' },
+    { id: 6, name: 'Signature Legacy', image: '/Watch_Png/Signature Series/Signature6.png', price: 949.99, series: 'Signature Series' },
   ];
 
   return (
@@ -21,6 +24,13 @@ function SignatureSeries() {
       >
         Back to Collections
       </button>
+
+      {/* Floating Cart Button */}
+      <button className="floating-cart-btn" onClick={() => navigate('/cart')}>
+        <ShoppingBag size={22} />
+        {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
+      </button>
+
       <div className="collection-detail-container">
         <div className="collection-detail-header">
           <h1>Signature Series</h1>
@@ -34,7 +44,12 @@ function SignatureSeries() {
                 <img src={watch.image || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23e0e0e0" width="200" height="200"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-size="14"%3EWatch Image%3C/text%3E%3C/svg%3E'} alt={watch.name} />
               </div>
               <h3>{watch.name}</h3>
-              <button className="add-to-cart-btn" onClick={(e) => e.stopPropagation()}>Add to Cart</button>
+              <button
+                className="add-to-cart-btn"
+                onClick={(e) => { e.stopPropagation(); addToCart(watch); }}
+              >
+                Add to Cart
+              </button>
             </div>
           ))}
         </div>

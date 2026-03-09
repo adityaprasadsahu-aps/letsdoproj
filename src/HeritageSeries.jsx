@@ -1,16 +1,19 @@
 import { useNavigate } from 'react-router-dom';
+import { ShoppingBag } from 'lucide-react';
+import { useCart } from './CartContext';
 import './collectionDetail.css';
 
 function HeritageSeries() {
   const navigate = useNavigate();
-  
+  const { addToCart, totalItems } = useCart();
+
   const watches = [
-    { id: 1, name: 'Heritage Classic', image: '/Watch_Png/Heritage Series/Heritage1.png' },
-    { id: 2, name: 'Heritage Regatta', image: '/Watch_Png/Heritage Series/Heritage2.png' },
-    { id: 3, name: 'Heritage Explorer', image: '/Watch_Png/Heritage Series/Heritage3.png' },
-    { id: 4, name: 'Heritage Racemaster', image: '/Watch_Png/Heritage Series/Heritage4.png' },
-    { id: 5, name: 'Heritage Aviator', image: '/Watch_Png/Heritage Series/Heritage5.png' },
-    { id: 6, name: 'Heritage Master', image: '/Watch_Png/Heritage Series/Heritage6.png' },
+    { id: 1, name: 'Heritage Classic', image: '/Watch_Png/Heritage Series/Heritage1.png', price: 599.99, series: 'Heritage Series' },
+    { id: 2, name: 'Heritage Regatta', image: '/Watch_Png/Heritage Series/Heritage2.png', price: 649.99, series: 'Heritage Series' },
+    { id: 3, name: 'Heritage Explorer', image: '/Watch_Png/Heritage Series/Heritage3.png', price: 669.99, series: 'Heritage Series' },
+    { id: 4, name: 'Heritage Racemaster', image: '/Watch_Png/Heritage Series/Heritage4.png', price: 699.99, series: 'Heritage Series' },
+    { id: 5, name: 'Heritage Aviator', image: '/Watch_Png/Heritage Series/Heritage5.png', price: 729.99, series: 'Heritage Series' },
+    { id: 6, name: 'Heritage Master', image: '/Watch_Png/Heritage Series/Heritage6.png', price: 799.99, series: 'Heritage Series' },
   ];
 
   return (
@@ -21,6 +24,13 @@ function HeritageSeries() {
       >
         Back to Collections
       </button>
+
+      {/* Floating Cart Button */}
+      <button className="floating-cart-btn" onClick={() => navigate('/cart')}>
+        <ShoppingBag size={22} />
+        {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
+      </button>
+
       <div className="collection-detail-container">
         <div className="collection-detail-header">
           <h1>Heritage Edition</h1>
@@ -34,7 +44,12 @@ function HeritageSeries() {
                 <img src={watch.image || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23e0e0e0" width="200" height="200"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-size="14"%3EWatch Image%3C/text%3E%3C/svg%3E'} alt={watch.name} />
               </div>
               <h3>{watch.name}</h3>
-              <button className="add-to-cart-btn" onClick={(e) => e.stopPropagation()}>Add to Cart</button>
+              <button
+                className="add-to-cart-btn"
+                onClick={(e) => { e.stopPropagation(); addToCart(watch); }}
+              >
+                Add to Cart
+              </button>
             </div>
           ))}
         </div>
