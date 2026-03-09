@@ -10,6 +10,7 @@ function Home() {
     const navigate = useNavigate();
     const [dashboardOpen, setDashboardOpen] = useState(false);
     const [showProductMenu, setShowProductMenu] = useState(false);
+    const { totalItems } = useCart();
 
     const collections = [
         { name: 'Classic Series', path: '/collections/classic' },
@@ -76,7 +77,27 @@ function Home() {
                     <div className="nav-icons">
                         <Search className="icon-hover" size={20} />
                         <User className="icon-hover" onClick={() => navigate('/register')} size={20} />
-                        <ShoppingBag className="icon-hover" size={20} />
+                        <div className="cart-icon-wrapper" onClick={() => navigate('/cart')} style={{ position: 'relative', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                            <ShoppingBag className="icon-hover" size={20} />
+                            {totalItems > 0 && (
+                                <span style={{
+                                    position: 'absolute',
+                                    top: '-8px',
+                                    right: '-8px',
+                                    background: '#e45000',
+                                    color: '#fff',
+                                    fontSize: '0.65em',
+                                    fontWeight: '700',
+                                    minWidth: '18px',
+                                    height: '18px',
+                                    borderRadius: '9px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    padding: '0 3px'
+                                }}>{totalItems}</span>
+                            )}
+                        </div>
                     </div>
                 </div>
             </header>
