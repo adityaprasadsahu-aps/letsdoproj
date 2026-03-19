@@ -50,13 +50,34 @@ function RegistrationForm() {
         return isValid;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (validateForm()) {
-            console.log('Form submitted:', formData);
-            alert('Registration Successful!');
-            navigate('/login');
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        fullName: formData.fullName,
+                        email: formData.email,
+                        password: formData.password
+                    })
+                });
+                const data = await response.json();
+                console.log('Registration response:', data);
+                if (data.success) {
+                    alert('Registration Successful!');
+                    navigate('/login');
+                } else {
+                    alert(data.message || 'Registration failed!');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('Registration failed! Please try again.');
+            }
         }
     };
 
