@@ -20,11 +20,33 @@ function LoginForm() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const [apiError, setApiError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Login attempted:', formData);
-        alert('Login Successful!');
-        navigate('/');
+        setApiError('');
+        setLoading(true);
+        try {
+            const response = await fetch('http://localhost:5002/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: formData.email, password: formData.password })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setApiError(data.error || 'Login failed. Please try again.');
+            } else {
+                alert(`Welcome back, ${data.fullName}!`);
+                navigate('/');
+            }
+        } catch (err) {
+            setApiError('Cannot connect to server. Make sure the backend is running.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleResetPassword = (e) => {
@@ -87,8 +109,14 @@ function LoginForm() {
                                     </button>
                                 </div>
 
-                                <button type="submit" className="submit-btn-primary">
-                                    Sign In
+                                {apiError && (
+                                    <p style={{ color: 'red', fontSize: '13px', textAlign: 'center', marginBottom: '10px' }}>
+                                        ⚠️ {apiError}
+                                    </p>
+                                )}
+
+                                <button type="submit" className="submit-btn-primary" disabled={loading}>
+                                    {loading ? 'Signing In...' : 'Sign In'}
                                 </button>
                             </form>
 
