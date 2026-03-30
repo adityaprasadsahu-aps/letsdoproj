@@ -3,6 +3,7 @@ import './App.css';
 import Home from './Home.jsx';
 import RegistrationForm from './register.jsx';
 import LoginForm from './login.jsx';
+import AddItem from './AddItem.jsx';
 import CollectionPage from './collection.jsx';
 import ContactPage from './contact.jsx';
 import ClassicSeries from './ClassicSeries.jsx';
@@ -24,6 +25,7 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/register" element={<RegistrationForm />} />
       <Route path="/login" element={<LoginForm />} />
+      <Route path="/admin/add-item" element={<AddItem />} />
       <Route path="/collections" element={<CollectionPage />} />
       <Route path="/collections/classic" element={<ClassicSeries />} />
       <Route path="/collections/explorer" element={<ExplorerSeries />} />

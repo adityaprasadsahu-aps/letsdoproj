@@ -31,6 +31,11 @@ function RegistrationForm() {
         let newErrors = {};
         let isValid = true;
 
+        if (!formData.fullName.trim()) {
+            newErrors.fullName = "Full name is required";
+            isValid = false;
+        }
+
         if (!emailRegex.test(formData.email)) {
             newErrors.email = "Invalid email format";
             isValid = false;
@@ -55,6 +60,12 @@ function RegistrationForm() {
 
         if (validateForm()) {
             try {
+                console.log('Sending registration request with data:', {
+                    fullName: formData.fullName,
+                    email: formData.email,
+                    password: '***'
+                });
+
                 const response = await fetch('http://localhost:5000/api/auth/register', {
                     method: 'POST',
                     headers: {
@@ -66,8 +77,11 @@ function RegistrationForm() {
                         password: formData.password
                     })
                 });
+
+                console.log('Response status:', response.status);
                 const data = await response.json();
                 console.log('Registration response:', data);
+
                 if (data.success) {
                     alert('Registration Successful!');
                     navigate('/login');
@@ -76,7 +90,7 @@ function RegistrationForm() {
                 }
             } catch (error) {
                 console.error('Registration error:', error);
-                alert('Registration failed! Please try again.');
+                alert('Registration failed! Please ensure:\n1. Backend server is running on http://localhost:5000\n2. MongoDB is running\n3. Your internet connection is active\n\nError: ' + error.message);
             }
         }
     };
@@ -106,6 +120,7 @@ function RegistrationForm() {
                                 placeholder="Aditya Prasad Sahu"
                                 required
                             />
+                            {errors.fullName && <span className="error-text" style={{ color: 'red', fontSize: '12px' }}>{errors.fullName}</span>}
                         </div>
 
                         <div className="form-group">

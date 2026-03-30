@@ -23,7 +23,18 @@ function LoginForm() {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('Login attempted:', formData);
-        alert('Login Successful!');
+        
+        // Check if email is admin email (demo)
+        const adminEmails = ['admin@example.com', 'aditya@example.com'];
+        if (adminEmails.includes(formData.email)) {
+            localStorage.setItem('adminEmail', formData.email);
+            localStorage.setItem('userEmail', formData.email);
+            alert('Admin Login Successful!');
+        } else {
+            localStorage.setItem('userEmail', formData.email);
+            alert('Login Successful!');
+        }
+        
         navigate('/');
     };
 
