@@ -16,6 +16,22 @@ function HeritageSeries() {
     { id: 6, name: 'Heritage Master', image: '/Watch_Png/Heritage Series/Heritage6.png', price: 799.99, series: 'Heritage Series' },
   ];
 
+  const handleAddToCart = async (watch) => {
+    const userId = localStorage.getItem('userEmail') || 'guest';
+    try {
+      addToCart(watch);
+      const response = await fetch('http://localhost:5000/api/cartitems/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, itemId: watch.id, name: watch.name, price: watch.price, quantity: 1, image: watch.image, category: watch.series })
+      });
+      const data = await response.json();
+      if (!data.success) console.error('Failed to save to database:', data.message);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    }
+  };
+
   return (
     <div>
       <button
@@ -46,7 +62,7 @@ function HeritageSeries() {
               <h3>{watch.name}</h3>
               <button
                 className="add-to-cart-btn"
-                onClick={(e) => { e.stopPropagation(); addToCart(watch); }}
+                onClick={(e) => { e.stopPropagation(); handleAddToCart(watch); }}
               >
                 Add to Cart
               </button>

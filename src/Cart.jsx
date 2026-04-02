@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Trash2, ArrowLeft, Plus, Minus } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './cart.css';
 
 function Cart() {
@@ -10,12 +10,8 @@ function Cart() {
   const [error, setError] = useState('');
   const userId = localStorage.getItem('userEmail') || 'guest';
 
-  // Fetch cart items on component mount
-  useEffect(() => {
-    fetchCartItems();
-  }, []);
-
-  const fetchCartItems = async () => {
+  // Memoize fetchCartFromDB to avoid dependency warnings
+  const fetchCartFromDB = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`http://localhost:5000/api/cartitems/user/${userId}`);
@@ -28,23 +24,28 @@ function Cart() {
         setError(data.message || 'Failed to fetch cart items');
       }
     } catch (err) {
-      console.error('Error fetching cart:', err);
-      setError('Error loading cart. Please try again.');
+      console.error('Error fetching cart from DB:', err);
+      setError('Error loading cart. Make sure the server is running.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
-  const removeItem = async (cartItemId) => {
+  // Fetch cart items from database on component mount
+  useEffect(() => {
+    fetchCartFromDB();
+  }, [fetchCartFromDB]);
+
+  const handleRemoveItem = async (dbId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/cartitems/remove/${cartItemId}`, {
+      const response = await fetch(`http://localhost:5000/api/cartitems/remove/${dbId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
       });
       const data = await response.json();
       
       if (data.success) {
-        setCartItems(cartItems.filter(item => item._id !== cartItemId));
+        setCartItems(cartItems.filter(item => item._id !== dbId));
       } else {
         alert('Failed to remove item');
       }
@@ -54,14 +55,10 @@ function Cart() {
     }
   };
 
-  const updateQuantity = async (cartItemId, newQuantity) => {
-    if (newQuantity <= 0) {
-      removeItem(cartItemId);
-      return;
-    }
-
+  const handleIncreaseQuantity = async (dbId, currentQty) => {
+    const newQuantity = currentQty + 1;
     try {
-      const response = await fetch(`http://localhost:5000/api/cartitems/update/${cartItemId}`, {
+      const response = await fetch(`http://localhost:5000/api/cartitems/update/${dbId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ quantity: newQuantity })
@@ -70,28 +67,39 @@ function Cart() {
       
       if (data.success) {
         setCartItems(cartItems.map(item => 
-          item._id === cartItemId ? { ...item, quantity: newQuantity } : item
+          item._id === dbId ? { ...item, quantity: newQuantity } : item
         ));
-      } else {
-        alert('Failed to update quantity');
       }
     } catch (err) {
       console.error('Error updating quantity:', err);
-      alert('Error updating item quantity');
     }
   };
 
-  const increaseQuantity = (cartItemId, currentQuantity) => {
-    updateQuantity(cartItemId, currentQuantity + 1);
-  };
-
-  const decreaseQuantity = (cartItemId, currentQuantity) => {
-    if (currentQuantity > 1) {
-      updateQuantity(cartItemId, currentQuantity - 1);
+  const handleDecreaseQuantity = async (dbId, currentQty) => {
+    if (currentQty <= 1) {
+      handleRemoveItem(dbId);
+      return;
+    }
+    const newQuantity = currentQty - 1;
+    try {
+      const response = await fetch(`http://localhost:5000/api/cartitems/update/${dbId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quantity: newQuantity })
+      });
+      const data = await response.json();
+      
+      if (data.success) {
+        setCartItems(cartItems.map(item => 
+          item._id === dbId ? { ...item, quantity: newQuantity } : item
+        ));
+      }
+    } catch (err) {
+      console.error('Error updating quantity:', err);
     }
   };
 
-  const clearCart = async () => {
+  const handleClearCart = async () => {
     if (window.confirm('Are you sure you want to clear your entire cart?')) {
       try {
         const response = await fetch(`http://localhost:5000/api/cartitems/clear/${userId}`, {
@@ -112,7 +120,7 @@ function Cart() {
     }
   };
 
-  // Calculate subtotal
+  // Calculate totals
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const tax = subtotal * 0.1; // 10% tax
   const shipping = cartItems.length > 0 ? 15.00 : 0;
@@ -122,20 +130,7 @@ function Cart() {
     return (
       <div className="cart-container">
         <div style={{ textAlign: 'center', padding: '50px' }}>
-          <h2>Loading cart...</h2>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="cart-container">
-        <div style={{ textAlign: 'center', padding: '50px', color: 'red' }}>
-          <h2>{error}</h2>
-          <button onClick={fetchCartItems} className="explore-btn">
-            Retry
-          </button>
+          <h2>Loading your cart...</h2>
         </div>
       </div>
     );
@@ -154,6 +149,19 @@ function Cart() {
         <h1>Shopping Cart</h1>
         <div style={{ width: '120px' }}></div>
       </div>
+
+      {error && (
+        <div style={{ 
+          backgroundColor: '#fff3cd', 
+          color: '#856404',
+          padding: '12px',
+          borderRadius: '4px',
+          margin: '15px',
+          textAlign: 'center'
+        }}>
+          {error}
+        </div>
+      )}
 
       <div className="cart-content">
         {cartItems.length === 0 ? (
@@ -192,14 +200,14 @@ function Cart() {
                     <div className="quantity-control">
                       <button
                         className="qty-btn"
-                        onClick={() => decreaseQuantity(item._id, item.quantity)}
+                        onClick={() => handleDecreaseQuantity(item._id, item.quantity)}
                       >
                         <Minus size={16} />
                       </button>
                       <span className="qty-display">{item.quantity}</span>
                       <button
                         className="qty-btn"
-                        onClick={() => increaseQuantity(item._id, item.quantity)}
+                        onClick={() => handleIncreaseQuantity(item._id, item.quantity)}
                       >
                         <Plus size={16} />
                       </button>
@@ -209,7 +217,7 @@ function Cart() {
                     </div>
                     <button
                       className="remove-btn"
-                      onClick={() => removeItem(item._id)}
+                      onClick={() => handleRemoveItem(item._id)}
                       title="Remove from cart"
                     >
                       <Trash2 size={20} />
@@ -252,7 +260,7 @@ function Cart() {
 
               <button
                 className="continue-shopping-btn"
-                onClick={clearCart}
+                onClick={handleClearCart}
                 style={{ backgroundColor: '#dc3545' }}
               >
                 Clear Cart

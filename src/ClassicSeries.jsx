@@ -16,6 +16,37 @@ function ClassicSeries() {
     { id: 6, name: 'Classic Sophisticated', image: '/Watch_Png/Classic Series/Classic6.png', price: 389.99, series: 'Classic Series' },
   ];
 
+  const handleAddToCart = async (watch) => {
+    const userId = localStorage.getItem('userEmail') || 'guest';
+    
+    try {
+      // Add to local context first (instant UI update)
+      addToCart(watch);
+      
+      // Then sync to MongoDB
+      const response = await fetch('http://localhost:5000/api/cartitems/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: userId,
+          itemId: watch.id,
+          name: watch.name,
+          price: watch.price,
+          quantity: 1,
+          image: watch.image,
+          category: watch.series
+        })
+      });
+      
+      const data = await response.json();
+      if (!data.success) {
+        console.error('Failed to save to database:', data.message);
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    }
+  };
+
   return (
     <div>
       <button
@@ -46,7 +77,7 @@ function ClassicSeries() {
               <h3>{watch.name}</h3>
               <button
                 className="add-to-cart-btn"
-                onClick={(e) => { e.stopPropagation(); addToCart(watch); }}
+                onClick={(e) => { e.stopPropagation(); handleAddToCart(watch); }}
               >
                 Add to Cart
               </button>
