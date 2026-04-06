@@ -10,15 +10,16 @@ app.use(cors());
 app.use(express.json());
 
 // Connect MongoDB
-//mongoose.connect("mongodb://127.0.0.1:27017/mydb")
-mongoose.connect("mongodb+srv://adityasaahu_db_user:bCEE3vX32p7SA0fj@etech.4tjktih.mongodb.net/?appName=Etech")
+//mongoose.connect("mongodb+srv://adityasaahu_db_user:bCEE3vX32p7SA0fj@etech.4tjktih.mongodb.net/?appName=Etech")
+//mongoose.connect("mongodb://localhost:27017/mydb")
+mongoose.connect("mongodb+srv://adityasaahu_db_user:bCEE3vX32p7SA0fj@etech.4tjktih.mongodb.net/mydb?appName=Etech")
     .then(() => console.log("MongoDB Connected"))
     .catch(err => console.log(err));
 
 // --- User Schema & Model ---
 const userSchema = new mongoose.Schema({
     fullName: { type: String, required: true },
-    email:    { type: String, required: true, unique: true, lowercase: true },
+    email: { type: String, required: true, unique: true, lowercase: true },
     password: { type: String, required: true },
     createdAt: { type: Date, default: Date.now }
 });
@@ -89,6 +90,9 @@ app.post("/api/login", async (req, res) => {
 // GET /api/users — List all registered users (debug/admin)
 app.get("/api/users", async (req, res) => {
     const users = await User.find({}, { password: 0 }); // never return passwords
+    if (users.length === 0) {
+        return res.status(404).json({ error: "No users found" });
+    }
     res.json(users);
 });
 
@@ -98,5 +102,5 @@ app.listen(5002, () => {
     console.log("  Endpoints:");
     console.log("  POST   http://localhost:5002/api/register");
     console.log("  POST   http://localhost:5002/api/login");
-    console.log("  GET    http://localhost:5002/api/users\n");
+    console.log("  GET    http://localhost:5002/api/users");
 });
