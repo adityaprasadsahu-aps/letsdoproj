@@ -50,13 +50,39 @@ function RegistrationForm() {
         return isValid;
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const [apiError, setApiError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-        if (validateForm()) {
-            console.log('Form submitted:', formData);
-            alert('Registration Successful!');
-            navigate('/login');
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setApiError('');
+
+        if (!validateForm()) return;
+
+        setLoading(true);
+        try {
+            const response = await fetch('http://localhost:5002/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fullName: formData.fullName,
+                    email: formData.email,
+                    password: formData.password
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setApiError(data.error || 'Registration failed. Please try again.');
+            } else {
+                alert('Registration Successful! Please log in.');
+                navigate('/login');
+            }
+        } catch (err) {
+            setApiError('Cannot connect to server. Make sure the backend is running.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -129,8 +155,14 @@ function RegistrationForm() {
                             {errors.confirmPassword && <span className="error-text" style={{ color: 'red', fontSize: '12px' }}>{errors.confirmPassword}</span>}
                         </div>
 
-                        <button type="submit" className="submit-btn-primary">
-                            Sign Up
+                        {apiError && (
+                            <p style={{ color: 'red', fontSize: '13px', textAlign: 'center', marginBottom: '10px' }}>
+                                ⚠️ {apiError}
+                            </p>
+                        )}
+
+                        <button type="submit" className="submit-btn-primary" disabled={loading}>
+                            {loading ? 'Signing Up...' : 'Sign Up'}
                         </button>
                     </form>
 
