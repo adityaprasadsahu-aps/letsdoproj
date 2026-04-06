@@ -10,11 +10,12 @@ app.use(cors());
 app.use(express.json());
 
 // Connect MongoDB
-//mongoose.connect("mongodb+srv://adityasaahu_db_user:bCEE3vX32p7SA0fj@etech.4tjktih.mongodb.net/?appName=Etech")
-//mongoose.connect("mongodb://localhost:27017/mydb")
-mongoose.connect("mongodb+srv://adityasaahu_db_user:bCEE3vX32p7SA0fj@etech.4tjktih.mongodb.net/mydb?appName=Etech")
-    .then(() => console.log("MongoDB Connected"))
-    .catch(err => console.log(err));
+// Option A: Local
+// mongoose.connect("mongodb://localhost:27017/mydb")
+// Option B: Atlas — direct connection (bypasses DNS SRV which is blocked on this network)
+mongoose.connect("mongodb://adityasaahu_db_user:QYYzk8nNhY7pJ7I5@ac-0x3xb9x-shard-00-00.4tjktih.mongodb.net:27017,ac-0x3xb9x-shard-00-01.4tjktih.mongodb.net:27017,ac-0x3xb9x-shard-00-02.4tjktih.mongodb.net:27017/mydb?ssl=true&replicaSet=atlas-zpcxb2-shard-0&authSource=admin&appName=Etech")
+    .then(() => console.log("MongoDB Connected — Atlas mydb (direct)"))
+    .catch(err => console.log("MongoDB Error:", err.message));
 
 // --- User Schema & Model ---
 const userSchema = new mongoose.Schema({
