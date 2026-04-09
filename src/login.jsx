@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 import './login.css';
 
 function LoginForm() {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -39,7 +41,7 @@ function LoginForm() {
             if (!response.ok) {
                 setApiError(data.error || 'Login failed. Please try again.');
             } else {
-                alert(`Welcome back, ${data.fullName}!`);
+                login(data.userId, data.fullName);  // store in AuthContext + localStorage
                 navigate('/');
             }
         } catch (err) {
