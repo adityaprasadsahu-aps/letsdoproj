@@ -22,20 +22,42 @@ function LoginForm() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Login attempted:', formData);
         
-        // Check if email is admin email (demo)
-        const adminEmails = ['admin@example.com', 'aditya@example.com'];
-        if (adminEmails.includes(formData.email)) {
-            localStorage.setItem('adminEmail', formData.email);
-            localStorage.setItem('userEmail', formData.email);
-            alert('Admin Login Successful!');
-        } else {
-            localStorage.setItem('userEmail', formData.email);
-            alert('Login Successful!');
-        }
-        
-        navigate('/');
+        const loginUser = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: formData.email,
+                        password: formData.password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    localStorage.setItem('userEmail', data.data.email);
+                    localStorage.setItem('userRole', data.data.role);
+                    localStorage.setItem('userName', data.data.fullName);
+                    
+                    if (data.data.role === 'admin') {
+                        alert('Admin Login Successful!');
+                        navigate('/admin-panel');
+                    } else {
+                        alert('Login Successful!');
+                        navigate('/');
+                    }
+                } else {
+                    alert(data.message || 'Login failed');
+                }
+            } catch (err) {
+                console.error('Login error:', err);
+                alert('Login error. Please try again.');
+            }
+        };
+
+        loginUser();
     };
 
     const handleResetPassword = (e) => {

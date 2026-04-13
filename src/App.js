@@ -4,6 +4,9 @@ import Home from './Home.jsx';
 import RegistrationForm from './register.jsx';
 import LoginForm from './login.jsx';
 import AddItem from './AddItem.jsx';
+import AdminPanel from './AdminPanel.jsx';
+import AdminDiscountManagement from './AdminDiscountManagement.jsx';
+import AdminSalesTimeManagement from './AdminSalesTimeManagement.jsx';
 import CollectionPage from './collection.jsx';
 import ContactPage from './contact.jsx';
 import ClassicSeries from './ClassicSeries.jsx';
@@ -25,7 +28,10 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/register" element={<RegistrationForm />} />
       <Route path="/login" element={<LoginForm />} />
+      <Route path="/admin-panel" element={<AdminPanel />} />
       <Route path="/admin/add-item" element={<AddItem />} />
+      <Route path="/admin/manage-discounts" element={<AdminDiscountManagement />} />
+      <Route path="/admin/manage-sales-time" element={<AdminSalesTimeManagement />} />
       <Route path="/collections" element={<CollectionPage />} />
       <Route path="/collections/classic" element={<ClassicSeries />} />
       <Route path="/collections/explorer" element={<ExplorerSeries />} />

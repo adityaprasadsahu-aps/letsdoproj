@@ -7,6 +7,8 @@ const cartRouter = require('./routes/cart');
 const registrationRouter = require('./routes/registration');
 const itemRouter = require('./routes/items');
 const cartItemsRouter = require('./routes/cartitems');
+const saleRouter = require('./routes/sale');
+const discountRouter = require('./routes/discount');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,6 +24,8 @@ app.use('/api/cart', cartRouter);
 app.use('/api/cartitems', cartItemsRouter);
 app.use('/api/auth', registrationRouter);
 app.use('/api/items', itemRouter);
+app.use('/api/sale', saleRouter);
+app.use('/api/discount', discountRouter);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Cart API Server is running', status: 'OK' });

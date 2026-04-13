@@ -55,6 +55,76 @@ router.post('/register', async (req, res) => {
   }
 });
 
+// Login endpoint
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and password are required.'
+      });
+    }
+
+    // Find user by email
+    const user = await RegistrationDetail.findOne({ email });
+
+    if (!user || user.password !== password) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password.'
+      });
+    }
+
+    // Login successful
+    res.json({
+      success: true,
+      message: 'Login successful!',
+      data: {
+        _id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role || 'user',
+        createdAt: user.createdAt
+      }
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Login failed.',
+      error: error.message
+    });
+  }
+});
+
+// Get user by email
+router.get('/user/:email', async (req, res) => {
+  try {
+    const user = await RegistrationDetail.findOne({ email: req.params.email }).select('-password');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found.'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: user
+    });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching user.',
+      error: error.message
+    });
+  }
+});
+
 // Get all registrations (for admin purposes)
 router.get('/registrations', async (req, res) => {
   try {

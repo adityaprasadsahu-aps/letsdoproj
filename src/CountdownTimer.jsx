@@ -7,41 +7,97 @@ function CountdownTimer() {
     minutes: 0,
     seconds: 0
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [endTime, setEndTime] = useState(null);
 
   const endTimeRef = useRef(null);
+  const timerRef = useRef(null);
+
+  const calculateTimeLeft = () => {
+    if (!endTimeRef.current) return;
+
+    const now = new Date().getTime();
+    const difference = endTimeRef.current - now;
+
+    if (difference > 0) {
+      setTime({
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60)
+      });
+    } else {
+      setTime({
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0
+      });
+    }
+  };
 
   useEffect(() => {
-    // Set end time only once when component mounts
-    if (!endTimeRef.current) {
-      endTimeRef.current = new Date().getTime() + 7 * 24 * 60 * 60 * 1000;
-    }
+    // Fetch sale end time from database
+    const fetchSaleInfo = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:5000/api/sale/current');
+        const data = await response.json();
 
-    const calculateTimeLeft = () => {
-      const now = new Date().getTime();
-      const difference = endTimeRef.current - now;
-
-      if (difference > 0) {
-        setTime({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60)
-        });
-      } else {
-        setTime({
-          days: 0,
-          hours: 0,
-          minutes: 0,
-          seconds: 0
-        });
+        if (data.success && data.data) {
+          const endTimeMs = new Date(data.data.endTime).getTime();
+          endTimeRef.current = endTimeMs;
+          setEndTime(endTimeMs);
+          setError(false);
+        } else {
+          setError(true);
+        }
+      } catch (err) {
+        console.error('Error fetching sale info:', err);
+        setError(true);
+      } finally {
+        setLoading(false);
       }
     };
 
-    calculateTimeLeft();
-    const timer = setInterval(calculateTimeLeft, 1000);
+    fetchSaleInfo();
 
-    return () => clearInterval(timer);
+    // Refresh sale info every 5 minutes to sync with admin updates
+    const refreshInterval = setInterval(fetchSaleInfo, 5 * 60 * 1000);
+    
+    return () => clearInterval(refreshInterval);
   }, []);
+
+  useEffect(() => {
+    if (!endTime) return;
+
+    // Calculate immediately
+    calculateTimeLeft();
+
+    // Start updating every second
+    timerRef.current = setInterval(calculateTimeLeft, 1000);
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [endTime]);
+
+  if (loading) {
+    return (
+      <div className="countdown-display">
+        <div style={{ color: '#999', textAlign: 'center' }}>Loading...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="countdown-display">
+        <div style={{ color: '#999', textAlign: 'center' }}>Unable to load sale info</div>
+      </div>
+    );
+  }
 
   return (
     <div className="countdown-display">

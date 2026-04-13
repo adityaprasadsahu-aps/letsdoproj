@@ -11,7 +11,19 @@ function AddItem() {
     price: '',
     image: '',
     category: '',
-    stock: ''
+    stock: '',
+    movementType: '',
+    caseMaterial: '',
+    caseDiameter: '',
+    caseThickness: '',
+    waterResistance: '',
+    crystal: '',
+    bandMaterial: '',
+    bandWidth: '',
+    batteryLife: '',
+    features: '',
+    warranty: '',
+    weight: ''
   });
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
@@ -67,6 +79,12 @@ function AddItem() {
       isValid = false;
     }
 
+    // Validate at least some specifications are provided
+    if (!formData.movementType && !formData.caseMaterial && !formData.waterResistance) {
+      newErrors.specs = "Please provide at least some product specifications";
+      isValid = false;
+    }
+
     setErrors(newErrors);
     return isValid;
   };
@@ -89,7 +107,21 @@ function AddItem() {
             price: parseFloat(formData.price),
             image: formData.image,
             category: formData.category,
-            stock: parseInt(formData.stock)
+            stock: parseInt(formData.stock),
+            specifications: {
+              movementType: formData.movementType,
+              caseMaterial: formData.caseMaterial,
+              caseDiameter: formData.caseDiameter,
+              caseThickness: formData.caseThickness,
+              waterResistance: formData.waterResistance,
+              crystal: formData.crystal,
+              bandMaterial: formData.bandMaterial,
+              bandWidth: formData.bandWidth,
+              batteryLife: formData.batteryLife,
+              features: formData.features,
+              warranty: formData.warranty,
+              weight: formData.weight
+            }
           })
         });
 
@@ -104,7 +136,19 @@ function AddItem() {
             price: '',
             image: '',
             category: '',
-            stock: ''
+            stock: '',
+            movementType: '',
+            caseMaterial: '',
+            caseDiameter: '',
+            caseThickness: '',
+            waterResistance: '',
+            crystal: '',
+            bandMaterial: '',
+            bandWidth: '',
+            batteryLife: '',
+            features: '',
+            warranty: '',
+            weight: ''
           });
           setTimeout(() => {
             setSuccessMessage('');
@@ -239,6 +283,167 @@ function AddItem() {
                   value={formData.image}
                   onChange={handleChange}
                   placeholder="e.g., watch1.jpg"
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <h3 style={{ marginTop: '20px', marginBottom: '10px' }}>Product Specifications</h3>
+              {errors.specs && <span className="error-text">{errors.specs}</span>}
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="movementType">Movement Type</label>
+                <input
+                  type="text"
+                  id="movementType"
+                  name="movementType"
+                  value={formData.movementType}
+                  onChange={handleChange}
+                  placeholder="e.g., Automatic Swiss"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="caseMaterial">Case Material</label>
+                <input
+                  type="text"
+                  id="caseMaterial"
+                  name="caseMaterial"
+                  value={formData.caseMaterial}
+                  onChange={handleChange}
+                  placeholder="e.g., Bronze with Natural Patina"
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="caseDiameter">Case Diameter</label>
+                <input
+                  type="text"
+                  id="caseDiameter"
+                  name="caseDiameter"
+                  value={formData.caseDiameter}
+                  onChange={handleChange}
+                  placeholder="e.g., 45mm"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="caseThickness">Case Thickness</label>
+                <input
+                  type="text"
+                  id="caseThickness"
+                  name="caseThickness"
+                  value={formData.caseThickness}
+                  onChange={handleChange}
+                  placeholder="e.g., 12mm"
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="waterResistance">Water Resistance</label>
+                <input
+                  type="text"
+                  id="waterResistance"
+                  name="waterResistance"
+                  value={formData.waterResistance}
+                  onChange={handleChange}
+                  placeholder="e.g., 30 ATM (300m)"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="crystal">Crystal</label>
+                <input
+                  type="text"
+                  id="crystal"
+                  name="crystal"
+                  value={formData.crystal}
+                  onChange={handleChange}
+                  placeholder="e.g., Sapphire Crystal with AR Coating"
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="bandMaterial">Band Material</label>
+                <input
+                  type="text"
+                  id="bandMaterial"
+                  name="bandMaterial"
+                  value={formData.bandMaterial}
+                  onChange={handleChange}
+                  placeholder="e.g., Leather with Steel Buckle"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="bandWidth">Band Width</label>
+                <input
+                  type="text"
+                  id="bandWidth"
+                  name="bandWidth"
+                  value={formData.bandWidth}
+                  onChange={handleChange}
+                  placeholder="e.g., 24mm"
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="batteryLife">Battery Life / Power Reserve</label>
+                <input
+                  type="text"
+                  id="batteryLife"
+                  name="batteryLife"
+                  value={formData.batteryLife}
+                  onChange={handleChange}
+                  placeholder="e.g., 60-hour power reserve"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="weight">Weight</label>
+                <input
+                  type="text"
+                  id="weight"
+                  name="weight"
+                  value={formData.weight}
+                  onChange={handleChange}
+                  placeholder="e.g., 124g"
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group" style={{ flex: '1' }}>
+                <label htmlFor="features">Features</label>
+                <input
+                  type="text"
+                  id="features"
+                  name="features"
+                  value={formData.features}
+                  onChange={handleChange}
+                  placeholder="e.g., World Time Function, Date Window, 24-hour Hand"
+                />
+              </div>
+
+              <div className="form-group" style={{ flex: '1' }}>
+                <label htmlFor="warranty">Warranty</label>
+                <input
+                  type="text"
+                  id="warranty"
+                  name="warranty"
+                  value={formData.warranty}
+                  onChange={handleChange}
+                  placeholder="e.g., 5 Years"
                 />
               </div>
             </div>
