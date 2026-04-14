@@ -7,7 +7,7 @@ import {
     Marker,
     ZoomableGroup,
 } from 'react-simple-maps';
-import './ServiceCenters.css';
+import '../styles/ServiceCenters.css';
 
 // Using unpkg CDN for the Natural Earth TopoJSON world map
 const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import './company-pages.css';
+import '../styles/CompanyPages.css';
 
 function Careers() {
     const navigate = useNavigate();

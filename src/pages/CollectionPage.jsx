@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import './collection.css';
+import '../styles/CollectionPage.css';
 
 function CollectionPage() {
   const navigate = useNavigate();

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from './AuthContext';
-import './Admin.css';
+import { useAuth } from '../contexts/AuthContext';
+import '../styles/Admin.css';
 
 const API = 'http://localhost:5000/api';
 
@@ -60,6 +60,10 @@ function Admin() {
   const [userForm, setUserForm] = useState({ fullName: '', email: '', isAdmin: false, newPassword: '' });
   const [userMsg, setUserMsg] = useState('');
 
+  // ─── Contact Messages ─────────────────────────────────────────────────────────
+  const [messages, setMessages] = useState([]);
+  const [messagesLoading, setMessagesLoading] = useState(true);
+
   // ─── Auth Guard ───────────────────────────────────────────────────────────────
   useEffect(() => {
     if (!isLoggedIn) { navigate('/login'); return; }
@@ -72,6 +76,7 @@ function Admin() {
     if (activeTab === 'products') fetchProducts();
     if (activeTab === 'offers')   fetchOffers();
     if (activeTab === 'users')    fetchUsers();
+    if (activeTab === 'messages') fetchMessages();
   }, [activeTab, isAdmin]);
 
   const fetchProducts = async () => {
@@ -97,6 +102,15 @@ function Admin() {
       setUsers(await res.json());
     } catch { setUsers([]); }
     setUsersLoading(false);
+  };
+
+  const fetchMessages = async () => {
+    setMessagesLoading(true);
+    try {
+      const res = await fetch(`${API}/contact`);
+      setMessages(await res.json());
+    } catch { setMessages([]); }
+    setMessagesLoading(false);
   };
 
   // ─── Product CRUD ─────────────────────────────────────────────────────────────
@@ -253,6 +267,7 @@ function Admin() {
             { id: 'products', icon: '🕐', label: 'Products' },
             { id: 'offers',   icon: '🏷️',  label: 'Banners & Offers' },
             { id: 'users',    icon: '👥', label: 'Users' },
+            { id: 'messages', icon: '💬', label: 'Contact Messages' },
           ].map(t => (
             <button
               key={t.id}
@@ -433,6 +448,43 @@ function Admin() {
                   <button type="submit" className="admin-btn-primary" style={{ width: '100%' }}>Save Changes</button>
                 </form>
               </Modal>
+            )}
+          </div>
+        )}
+
+        {/* MESSAGES */}
+        {activeTab === 'messages' && (
+          <div>
+            <div className="admin-section-header">
+              <div>
+                <h1>Contact Messages</h1>
+                <p className="admin-subtitle">{messages.length} messages received</p>
+              </div>
+            </div>
+
+            {messagesLoading ? <div className="admin-loader">Loading messages…</div> : (
+              <div className="admin-table-wrapper">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th><th>Email</th><th>Message</th><th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {messages.map(m => (
+                      <tr key={m._id}>
+                        <td>{m.name}</td>
+                        <td>{m.email}</td>
+                        <td style={{ maxWidth: '300px', wordWrap: 'break-word' }}>{m.message}</td>
+                        <td>{new Date(m.createdAt).toLocaleString()}</td>
+                      </tr>
+                    ))}
+                    {messages.length === 0 && (
+                      <tr><td colSpan="4" className="admin-empty-row">No messages yet.</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         )}

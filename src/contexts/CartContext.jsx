@@ -7,7 +7,7 @@ import {
   updateCartItem,
   removeItemFromCart,
   clearCart as clearCartApi,
-} from './api/cartApi';
+} from '../api/cartApi';
 
 const CartContext = createContext(null);
 

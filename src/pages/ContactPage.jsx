@@ -1,9 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './contact.css';
+import '../styles/ContactPage.css';
 
 function ContactPage() {
     const navigate = useNavigate();
+    const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+    const [status, setStatus] = useState('');
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setStatus('Sending...');
+        try {
+            const response = await fetch('http://localhost:5000/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            if (response.ok) {
+                setStatus('Message sent successfully!');
+                setFormData({ name: '', email: '', message: '' });
+            } else {
+                setStatus('Failed to send message. Please try again.');
+            }
+        } catch (error) {
+            setStatus('Error sending message. Please try again.');
+        }
+    };
+
     return (
         <div>
             <button
@@ -67,6 +94,55 @@ function ContactPage() {
                                 <p>Bhubaneswar, Odisha 751024 India</p>
                                 <p>Tel: +91 811-4611-204</p>
                             </div>
+                        </div>
+
+                        <div className="contact-form-section">
+                            <h2 className="section-title">Send us a Message</h2>
+                            <form onSubmit={handleSubmit} style={{ maxWidth: '600px', margin: '0 auto' }}>
+                                <div style={{ marginBottom: '15px' }}>
+                                    <label htmlFor="name" style={{ display: 'block', marginBottom: '5px' }}>Name:</label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        required
+                                        style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}
+                                    />
+                                </div>
+                                <div style={{ marginBottom: '15px' }}>
+                                    <label htmlFor="email" style={{ display: 'block', marginBottom: '5px' }}>Email:</label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                        style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}
+                                    />
+                                </div>
+                                <div style={{ marginBottom: '15px' }}>
+                                    <label htmlFor="message" style={{ display: 'block', marginBottom: '5px' }}>Message:</label>
+                                    <textarea
+                                        id="message"
+                                        name="message"
+                                        value={formData.message}
+                                        onChange={handleChange}
+                                        required
+                                        rows="5"
+                                        style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    style={{ padding: '10px 20px', background: '#e45000', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
+                                >
+                                    Send Message
+                                </button>
+                                {status && <p style={{ marginTop: '10px', color: status.includes('success') ? 'green' : 'red' }}>{status}</p>}
+                            </form>
                         </div>
                     </main>
 

@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import './index.css';
+import './styles/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { AuthProvider } from './AuthContext';
-import { CartProvider } from './CartContext';
+import { AuthProvider } from './contexts/AuthContext';
+import { CartProvider } from './contexts/CartContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Trash2, ArrowLeft, Plus, Minus } from 'lucide-react';
-import { useCart } from './CartContext';
-import './cart.css';
+import { useCart } from '../contexts/CartContext';
+import '../styles/Cart.css';
 
 function Cart() {
   const navigate = useNavigate();

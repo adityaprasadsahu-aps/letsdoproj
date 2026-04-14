@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, User, ShoppingBag } from 'lucide-react';
-import './App.css';
+import '../styles/App.css';
 import SlidingDashboard from './SlidingDashboard.jsx';
 import CountdownTimer from './CountdownTimer.jsx';
-import { useCart } from './CartContext';
-import { useAuth } from './AuthContext';
+import { useCart } from '../contexts/CartContext';
+import { useAuth } from '../contexts/AuthContext';
 
 function Home() {
     const navigate = useNavigate();
@@ -73,12 +73,19 @@ function Home() {
                                 </div>
                             )}
                         </div>
-                        <a href="/">STORE</a>
-                        <a href="/">ABOUT</a>
+                        <div className="nav-item">
+                            <a href="#" className="nav-link-item" onClick={(e) => {e.preventDefault(); navigate('/store');}}>STORE</a>
+                        </div>
+                        <div className="nav-item">
+                            <a href="#" className="nav-link-item" onClick={(e) => {e.preventDefault(); navigate('/about');}}>ABOUT</a>
+                        </div>
+                        <div className="nav-item">
+                            <a href="#" className="nav-link-item" onClick={(e) => {e.preventDefault(); navigate('/contact');}}>CONTACT</a>
+                        </div>
                     </nav>
 
                     <div className="nav-icons" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                        <Search className="icon-hover" size={20} />
+                        <Search className="icon-hover" size={20} onClick={() => navigate('/search')} />
 
                         {isLoggedIn ? (
                             <div className="nav-item profile-dropdown-container" style={{ position: 'relative' }}
@@ -246,23 +253,23 @@ function Home() {
                     <div>
                         <h4>Products</h4>
                         <ul>
-                            <li>Collections</li>
-                            <li>New Arrivals</li>
-                            <li>Compare</li>
+                            <li onClick={() => navigate('/collections-page')} style={{ cursor: 'pointer' }}>Collections</li>
+                            <li onClick={() => navigate('/new-arrivals')} style={{ cursor: 'pointer' }}>New Arrivals</li>
+                            <li onClick={() => navigate('/compare')} style={{ cursor: 'pointer' }}>Compare</li>
                         </ul>
                     </div>
 
                     <div>
                         <h4 onClick={() => navigate('/contact')} style={{ cursor: 'pointer' }}>Support</h4>
                         <ul>
-                            <li onClick={() => navigate('/contact')} style={{ cursor: 'pointer' }}>FAQs</li>
+                            <li onClick={() => navigate('/faqs')} style={{ cursor: 'pointer' }}>FAQs</li>
                             <li onClick={() => navigate('/service-centers')} style={{ cursor: 'pointer' }}>Service Centers</li>
                             <li onClick={() => navigate('/contact')} style={{ cursor: 'pointer' }}>Warranty</li>
                         </ul>
                     </div>
 
                     <div>
-                        <h4>Company</h4>
+                        <h4 onClick={() => navigate('/company')} style={{ cursor: 'pointer' }}>Company</h4>
                         <ul>
                             <li onClick={() => navigate('/our-story')} style={{ cursor: 'pointer' }}>Our Story</li>
                             <li onClick={() => navigate('/sustainability')} style={{ cursor: 'pointer' }}>Sustainability</li>
@@ -273,7 +280,7 @@ function Home() {
                     <div>
                         <h4>Contact</h4>
                         <ul>
-                            <li onClick={() => navigate('/contact')} style={{ cursor: 'pointer' }}>Get the latest news and updates.</li>
+                            <li onClick={() => navigate('/news')} style={{ cursor: 'pointer' }}>Get the latest news and updates.</li>
                         </ul>
                     </div>
                 </div>

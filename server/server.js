@@ -63,6 +63,14 @@ const orderSchema = new mongoose.Schema({
 });
 const Order = mongoose.model('Order', orderSchema);
 
+const contactMessageSchema = new mongoose.Schema({
+  name:      { type: String, required: true },
+  email:     { type: String, required: true },
+  message:   { type: String, required: true },
+  createdAt: { type: Date, default: Date.now }
+});
+const ContactMessage = mongoose.model('ContactMessage', contactMessageSchema);
+
 // ─── Middleware ───────────────────────────────────────────────────────────────
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
@@ -208,6 +216,29 @@ app.put('/api/orders/:id/status', async (req, res) => {
     const order = await Order.findByIdAndUpdate(req.params.id, { status }, { new: true });
     if (!order) return res.status(404).json({ error: 'Order not found' });
     res.json(order);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ─── Contact Message Routes ───────────────────────────────────────────────────
+app.get('/api/contact', async (req, res) => {
+  try {
+    const messages = await ContactMessage.find().sort({ createdAt: -1 });
+    res.json(messages);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.post('/api/contact', async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
+    if (!name || !email || !message)
+      return res.status(400).json({ error: 'Name, email, and message are required' });
+    const contactMessage = new ContactMessage({ name, email, message });
+    await contactMessage.save();
+    res.status(201).json({ message: 'Contact message sent successfully' });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }
