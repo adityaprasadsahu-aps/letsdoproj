@@ -51,7 +51,7 @@ function Home() {
                             onMouseEnter={() => setShowProductMenu(true)}
                             onMouseLeave={() => setShowProductMenu(false)}
                         >
-                            <a href="#" className="nav-link-item">PRODUCTS</a>
+                            <a href="/" className="nav-link-item">PRODUCTS</a>
                             {showProductMenu && (
                                 <div className="dropdown-menu">
                                     {collections.map((collection, index) => (
@@ -70,8 +70,8 @@ function Home() {
                                 </div>
                             )}
                         </div>
-                        <a href="#">STORE</a>
-                        <a href="#">ABOUT</a>
+                        <a href="/">STORE</a>
+                        <a href="/">ABOUT</a>
                     </nav>
 
                     <div className="nav-icons">
@@ -139,7 +139,7 @@ function Home() {
             <section className="section">
                 <div className="section-header">
                     <h2>Our Collections</h2>
-                    <a href="#" onClick={(e) => { e.preventDefault(); navigate('/collections'); }}>View All →</a>
+                    <a href="/" onClick={(e) => { e.preventDefault(); navigate('/collections'); }}>View All →</a>
                 </div>
 
                 <div className="collection-grid">

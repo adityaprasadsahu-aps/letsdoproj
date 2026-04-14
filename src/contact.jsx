@@ -49,10 +49,10 @@ function ContactPage() {
                             <h4 className="note-title">Note</h4>
                             <ul className="note-list">
                                 <li>English only acceptable.</li>
-                                <li>For Cash Register & POS, <a href="#">click HERE</a>.</li>
-                                <li>For Mobile information products, <a href="#">click HERE</a>.</li>
-                                <li>For inquiry about personal information, <a href="#">click HERE</a>.</li>
-                                <li>For inquiry about idea proposal, <a href="#">click HERE</a>.</li>
+                                <li>For Cash Register & POS, <a href="/">click HERE</a>.</li>
+                                <li>For Mobile information products, <a href="/">click HERE</a>.</li>
+                                <li>For inquiry about personal information, <a href="/">click HERE</a>.</li>
+                                <li>For inquiry about idea proposal, <a href="/">click HERE</a>.</li>
                             </ul>
                         </div>
 
@@ -75,18 +75,18 @@ function ContactPage() {
                             Support <span>&minus;</span>
                         </div>
                         <ul className="sidebar-menu">
-                            <li><a href="#">FAQs (Frequently Asked Questions) <span>&gt;</span></a></li>
-                            <li><a href="#">Manuals <span>&gt;</span></a></li>
-                            <li><a href="#">Downloads <span>&gt;</span></a></li>
-                            <li><a href="#">Computer OS compatibility <span>&gt;</span></a></li>
-                            <li><a href="#">Smartphone compatibility <span>&gt;</span></a></li>
-                            <li><a href="#">Video Tutorials <span>&gt;</span></a></li>
-                            <li><a href="#">Warranty <span>&gt;</span></a></li>
-                            <li><a href="#">Product Repair / Parts <span>&gt;</span></a></li>
-                            <li><a href="#">Technical Support <span>&gt;</span></a></li>
-                            <li><a href="#">Authorized Online Seller <span>&gt;</span></a></li>
-                            <li><a href="#">CHRONOS International Warranty Network <span>&gt;</span></a></li>
-                            <li><a href="#">Repair Status Checker <span>&gt;</span></a></li>
+                            <li><a href="/">FAQs (Frequently Asked Questions) <span>&gt;</span></a></li>
+                            <li><a href="/">Manuals <span>&gt;</span></a></li>
+                            <li><a href="/">Downloads <span>&gt;</span></a></li>
+                            <li><a href="/">Computer OS compatibility <span>&gt;</span></a></li>
+                            <li><a href="/">Smartphone compatibility <span>&gt;</span></a></li>
+                            <li><a href="/">Video Tutorials <span>&gt;</span></a></li>
+                            <li><a href="/">Warranty <span>&gt;</span></a></li>
+                            <li><a href="/">Product Repair / Parts <span>&gt;</span></a></li>
+                            <li><a href="/">Technical Support <span>&gt;</span></a></li>
+                            <li><a href="/">Authorized Online Seller <span>&gt;</span></a></li>
+                            <li><a href="/">CHRONOS International Warranty Network <span>&gt;</span></a></li>
+                            <li><a href="/">Repair Status Checker <span>&gt;</span></a></li>
                         </ul>
                     </aside>
                 </div>
