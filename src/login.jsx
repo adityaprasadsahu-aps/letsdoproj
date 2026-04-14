@@ -30,7 +30,7 @@ function LoginForm() {
         setApiError('');
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:5002/api/login', {
+            const response = await fetch('http://localhost:5000/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: formData.email, password: formData.password })
@@ -41,7 +41,7 @@ function LoginForm() {
             if (!response.ok) {
                 setApiError(data.error || 'Login failed. Please try again.');
             } else {
-                login(data.userId, data.fullName);  // store in AuthContext + localStorage
+                login(data.userId, data.fullName, data.isAdmin);  // store in AuthContext + localStorage
                 navigate('/');
             }
         } catch (err) {

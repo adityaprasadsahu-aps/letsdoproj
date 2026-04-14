@@ -17,6 +17,8 @@ import Sustainability from './Sustainability.jsx';
 import Careers from './Careers.jsx';
 import ServiceCenters from './ServiceCenters.jsx';
 import Cart from './Cart.jsx';
+import Profile from './Profile.jsx';
+import Admin from './Admin.jsx';
 
 function App() {
   return (
@@ -38,6 +40,8 @@ function App() {
       <Route path="/careers" element={<Careers />} />
       <Route path="/service-centers" element={<ServiceCenters />} />
       <Route path="/cart" element={<Cart />} />
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/admin" element={<Admin />} />
     </Routes>
   );
 }

@@ -5,12 +5,15 @@ import './App.css';
 import SlidingDashboard from './SlidingDashboard.jsx';
 import CountdownTimer from './CountdownTimer.jsx';
 import { useCart } from './CartContext';
+import { useAuth } from './AuthContext';
 
 function Home() {
     const navigate = useNavigate();
     const [dashboardOpen, setDashboardOpen] = useState(false);
     const [showProductMenu, setShowProductMenu] = useState(false);
+    const [showProfileMenu, setShowProfileMenu] = useState(false);
     const { totalItems } = useCart();
+    const { isLoggedIn, user, logout } = useAuth();
 
     const collections = [
         { name: 'Classic Series', path: '/collections/classic' },
@@ -74,9 +77,57 @@ function Home() {
                         <a href="/">ABOUT</a>
                     </nav>
 
-                    <div className="nav-icons">
+                    <div className="nav-icons" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                         <Search className="icon-hover" size={20} />
-                        <User className="icon-hover" onClick={() => navigate('/register')} size={20} />
+
+                        {isLoggedIn ? (
+                            <div className="nav-item profile-dropdown-container" style={{ position: 'relative' }}
+                                onMouseEnter={() => setShowProfileMenu(true)}
+                                onMouseLeave={() => setShowProfileMenu(false)}>
+                                <div className="user-profile-icon" style={{
+                                    width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(135deg, #e45000, #ff8c00)',
+                                    color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    fontWeight: 'bold', cursor: 'pointer', fontSize: '14px',
+                                    boxShadow: '0 2px 5px rgba(228, 80, 0, 0.4)'
+                                }}>
+                                    {user?.fullName?.charAt(0).toUpperCase()}
+                                </div>
+                                {showProfileMenu && (
+                                    <div className="dropdown-menu" style={{
+                                        right: 0, left: 'auto', minWidth: '180px',
+                                        background: '#111', padding: '8px',
+                                        boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+                                        borderRadius: '10px',
+                                        border: '1px solid #222'
+                                    }}>
+                                        <div style={{ padding: '8px 10px 10px', borderBottom: '1px solid #222', marginBottom: '6px' }}>
+                                            <small style={{ color: '#666', display: 'block', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Signed in as</small>
+                                            <div style={{ fontWeight: '600', color: '#f1f1f1', fontSize: '14px', marginTop: '2px' }}>{user?.fullName}</div>
+                                        </div>
+                                        <div className="dropdown-item" onClick={() => { navigate('/profile'); setShowProfileMenu(false); }}
+                                            style={{ color: '#ccc', fontWeight: '500', borderRadius: '6px', padding: '9px 10px' }}>
+                                            📦 My Profile &amp; Orders
+                                        </div>
+                                        {user?.isAdmin && (
+                                            <div className="dropdown-item" onClick={() => { navigate('/admin'); setShowProfileMenu(false); }}
+                                                style={{ color: '#e45000', fontWeight: '500', borderRadius: '6px', padding: '9px 10px' }}>
+                                                ⚙️ Admin Portal
+                                            </div>
+                                        )}
+                                        <div style={{ borderTop: '1px solid #222', marginTop: '6px', paddingTop: '6px' }}>
+                                            <div className="dropdown-item" onClick={() => {
+                                                logout();
+                                                setShowProfileMenu(false);
+                                            }} style={{ color: '#ef4444', fontWeight: '500', borderRadius: '6px', padding: '9px 10px' }}>
+                                                Sign Out
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <User className="icon-hover" onClick={() => navigate('/login')} size={20} />
+                        )}
                         <div className="cart-icon-wrapper" onClick={() => navigate('/cart')} style={{ position: 'relative', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                             <ShoppingBag className="icon-hover" size={20} />
                             {totalItems > 0 && (

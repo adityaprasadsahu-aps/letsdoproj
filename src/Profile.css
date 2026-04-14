@@ -1,0 +1,239 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+.profile-page {
+  min-height: 100vh;
+  background: #0a0a0a;
+  color: #f1f1f1;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.profile-header {
+  background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
+  border-bottom: 1px solid #222;
+  padding: 16px 32px 0;
+}
+
+.profile-back-btn {
+  background: none;
+  border: 1px solid #333;
+  color: #888;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+  margin-bottom: 24px;
+}
+.profile-back-btn:hover { border-color: #e45000; color: #e45000; }
+
+.profile-hero {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 0 28px;
+}
+
+.profile-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e45000, #ff8c00);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(228, 80, 0, 0.4);
+  flex-shrink: 0;
+}
+
+.profile-hero-info { flex: 1; }
+.profile-hero-info h1 { font-size: 22px; font-weight: 600; margin: 0 0 4px; }
+.profile-hero-info p  { font-size: 13px; color: #888; margin: 0; }
+
+.profile-logout-btn {
+  background: #1e1e1e;
+  border: 1px solid #333;
+  color: #ccc;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+.profile-logout-btn:hover { border-color: #ef4444; color: #ef4444; }
+
+/* ── Container ───────────────────────────────────────────────────────────── */
+.profile-container {
+  max-width: 900px;
+  margin: 32px auto;
+  padding: 0 24px;
+}
+
+/* ── Tabs ────────────────────────────────────────────────────────────────── */
+.profile-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid #222;
+  padding-bottom: 0;
+}
+
+.profile-tab {
+  background: none;
+  border: none;
+  color: #888;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+  margin-bottom: -1px;
+}
+.profile-tab:hover { color: #f1f1f1; }
+.profile-tab.active { color: #e45000; border-bottom-color: #e45000; }
+
+/* ── Section ─────────────────────────────────────────────────────────────── */
+.profile-section h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 20px;
+  color: #f1f1f1;
+}
+
+.profile-loader { color: #888; padding: 40px 0; text-align: center; }
+
+.profile-empty {
+  text-align: center;
+  padding: 60px 0;
+  color: #666;
+}
+.profile-empty-icon { font-size: 48px; margin-bottom: 16px; }
+.profile-empty p { margin: 0 0 20px; font-size: 15px; }
+
+/* ── Orders ──────────────────────────────────────────────────────────────── */
+.orders-list { display: flex; flex-direction: column; gap: 16px; }
+
+.order-card {
+  background: #141414;
+  border: 1px solid #222;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.order-card:hover { border-color: #333; }
+
+.order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #1e1e1e;
+}
+
+.order-id   { font-weight: 600; font-size: 14px; color: #e45000; display: block; }
+.order-date { font-size: 12px; color: #666; display: block; margin-top: 2px; }
+
+.order-status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.order-items { padding: 12px 20px; display: flex; flex-direction: column; gap: 10px; }
+
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.order-item-img {
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #1e1e1e;
+}
+
+.order-item-details { flex: 1; }
+.order-item-name   { display: block; font-size: 14px; font-weight: 500; }
+.order-item-series { display: block; font-size: 12px; color: #888; margin-top: 2px; }
+
+.order-item-right  { text-align: right; }
+.order-item-qty    { display: block; font-size: 12px; color: #888; }
+.order-item-price  { display: block; font-size: 14px; font-weight: 600; color: #e45000; }
+
+.order-card-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-top: 1px solid #1e1e1e;
+  font-size: 14px;
+  color: #888;
+}
+.order-total { font-weight: 700; color: #f1f1f1; }
+
+/* ── Settings ────────────────────────────────────────────────────────────── */
+.settings-card {
+  background: #141414;
+  border: 1px solid #222;
+  border-radius: 12px;
+  padding: 28px;
+  max-width: 480px;
+}
+.settings-card h3 { font-size: 16px; font-weight: 600; margin: 0 0 20px; }
+
+.settings-form   { display: flex; flex-direction: column; gap: 14px; }
+.settings-field  { display: flex; flex-direction: column; gap: 6px; }
+.settings-field label { font-size: 13px; color: #888; font-weight: 500; }
+.settings-field input {
+  background: #0f0f0f;
+  border: 1px solid #2a2a2a;
+  color: #f1f1f1;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+.settings-field input:focus { border-color: #e45000; }
+
+.settings-error   { color: #ef4444; font-size: 13px; margin: 0; }
+.settings-success { color: #10b981; font-size: 13px; margin: 0; }
+
+/* ── Shared Button ───────────────────────────────────────────────────────── */
+.profile-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #e45000, #ff6a00);
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  font-family: 'Inter', sans-serif;
+}
+.profile-btn:hover    { opacity: 0.9; }
+.profile-btn:active   { transform: scale(0.98); }
+.profile-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+@media (max-width: 600px) {
+  .profile-header { padding: 14px 16px 0; }
+  .profile-container { padding: 0 16px; margin-top: 20px; }
+  .profile-hero { gap: 14px; }
+  .profile-avatar { width: 52px; height: 52px; font-size: 22px; }
+  .profile-hero-info h1 { font-size: 18px; }
+}
