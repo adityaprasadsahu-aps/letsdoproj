@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import Breadcrumb from '../components/Breadcrumb.jsx';
 import '../styles/Admin.css';
 
 const API = 'http://localhost:5000/api';
@@ -9,7 +10,7 @@ const SERIES_OPTIONS = ['classic', 'explorer', 'signature', 'heritage', 'luxury'
 
 const emptyProduct = {
   id: '', name: '', series: '', seriesKey: '', image: '', price: '',
-  rating: 4.5, reviews: 0, description: '', specifications: '', colors: '', inStock: true, limited: ''
+  description: '', specifications: '', colors: '', inStock: true, limited: ''
 };
 
 const emptyOffer = {
@@ -109,8 +110,27 @@ function Admin() {
     try {
       const res = await fetch(`${API}/contact`);
       setMessages(await res.json());
-    } catch { setMessages([]); }
+    } catch {
+      setMessages([]);
+    }
     setMessagesLoading(false);
+  };
+
+  const updateMessageStatus = async (messageId, status) => {
+    try {
+      const res = await fetch(`${API}/contact/${messageId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      if (res.ok) {
+        fetchMessages();
+      } else {
+        console.error('Failed to update status', await res.text());
+      }
+    } catch (err) {
+      console.error('Failed to update status', err);
+    }
   };
 
   // ─── Product CRUD ─────────────────────────────────────────────────────────────
@@ -137,8 +157,6 @@ function Admin() {
   const parseProdForm = (f) => ({
     ...f,
     id: Number(f.id),
-    rating: Number(f.rating),
-    reviews: Number(f.reviews),
     seriesKey: f.seriesKey || f.series?.toLowerCase(),
     specifications: f.specifications
       ? Object.fromEntries(f.specifications.split('\n').filter(Boolean).map(l => {
@@ -279,11 +297,13 @@ function Admin() {
             </button>
           ))}
         </nav>
-        <button className="admin-back-btn" onClick={() => navigate('/')}>← Back to Store</button>
       </aside>
 
       {/* Main */}
       <main className="admin-main">
+        <div className="admin-main-top">
+          <Breadcrumb />
+        </div>
 
         {/* PRODUCTS */}
         {activeTab === 'products' && (
@@ -467,7 +487,7 @@ function Admin() {
                 <table className="admin-table">
                   <thead>
                     <tr>
-                      <th>Name</th><th>Email</th><th>Message</th><th>Date</th>
+                      <th>Name</th><th>Email</th><th>Subject</th><th>Status</th><th>Message</th><th>Date</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -475,7 +495,19 @@ function Admin() {
                       <tr key={m._id}>
                         <td>{m.name}</td>
                         <td>{m.email}</td>
-                        <td style={{ maxWidth: '300px', wordWrap: 'break-word' }}>{m.message}</td>
+                        <td>{m.subject || 'No subject'}</td>
+                        <td>
+                          <select
+                            value={m.status || 'unread'}
+                            onChange={e => updateMessageStatus(m._id, e.target.value)}
+                            className="admin-status-select"
+                          >
+                            <option value="unread">Unread</option>
+                            <option value="read">Read</option>
+                            <option value="responded">Responded</option>
+                          </select>
+                        </td>
+                        <td style={{ maxWidth: '260px', wordWrap: 'break-word' }}>{m.message}</td>
                         <td>{new Date(m.createdAt).toLocaleString()}</td>
                       </tr>
                     ))}
@@ -519,14 +551,6 @@ function Admin() {
               <div className="admin-field">
                 <label>Price (e.g. $299.99)</label>
                 <input value={prodForm.price} onChange={e => setProdForm(f => ({ ...f, price: e.target.value }))} required />
-              </div>
-              <div className="admin-field">
-                <label>Rating</label>
-                <input type="number" step="0.1" min="0" max="5" value={prodForm.rating} onChange={e => setProdForm(f => ({ ...f, rating: e.target.value }))} />
-              </div>
-              <div className="admin-field">
-                <label>Reviews</label>
-                <input type="number" min="0" value={prodForm.reviews} onChange={e => setProdForm(f => ({ ...f, reviews: e.target.value }))} />
               </div>
             </div>
             <div className="admin-field">

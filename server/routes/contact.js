@@ -117,7 +117,7 @@ router.post('/', async (req, res) => {
     // Send admin notification
     const adminEmailOptions = {
       from: process.env.GMAIL_USER || 'noreply@chronos.com',
-      to: process.env.ADMIN_EMAIL || 'adityapstemp@gmail.com',
+      to: 'adityapstemp@gmail.com',
       subject: `[NEW] Contact Form Submission - ${subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto;">

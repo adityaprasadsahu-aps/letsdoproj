@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import Breadcrumb from '../components/Breadcrumb.jsx';
 import '../styles/Profile.css';
 
 function Profile() {
@@ -70,9 +71,9 @@ function Profile() {
 
   return (
     <div className="profile-page">
-      {/* Header */}
+      <Breadcrumb />
+      {/* Header */}}
       <div className="profile-header">
-        <button className="profile-back-btn" onClick={() => navigate('/')}>← Back to Store</button>
         <div className="profile-hero">
           <div className="profile-avatar">
             {user.fullName?.charAt(0).toUpperCase()}

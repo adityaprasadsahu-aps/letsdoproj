@@ -1,6 +1,6 @@
 .company-page {
     font-family: 'Inter', sans-serif;
-    color: #1a1a1a;
+    color: #ffffff;
     background: linear-gradient(135deg, #000000 -30%, #ed3a03 130%);
     min-height: 100vh;
 }
@@ -88,6 +88,28 @@
 .company-content {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 60px 48px;
+    color: #ffffff;
+}
+
+.company-content h1 {
+    color: #ffffff;
+    font-size: 2.5em;
+    margin-bottom: 30px;
+}
+
+.company-content h2 {
+    color: #ffffff;
+    font-size: 1.8em;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.company-content p {
+    color: #ffffff;
+    font-size: 1em;
+    line-height: 1.6;
+    margin-bottom: 15px;
 }
 
 /* Section */

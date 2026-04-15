@@ -7,6 +7,7 @@ import {
     Marker,
     ZoomableGroup,
 } from 'react-simple-maps';
+import Breadcrumb from '../components/Breadcrumb.jsx';
 import '../styles/ServiceCenters.css';
 
 // Using unpkg CDN for the Natural Earth TopoJSON world map
@@ -95,10 +96,7 @@ function ServiceCenters() {
 
     return (
         <div className="sc-page">
-            <button className="sc-back-btn" onClick={() => navigate('/')}>
-                ← Back
-            </button>
-
+            <Breadcrumb />
             <div className="sc-hero">
                 <h1 className="sc-hero-title">Global Service Centers</h1>
                 <p className="sc-hero-sub">

@@ -1,19 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import Breadcrumb from '../components/Breadcrumb.jsx';
 import '../styles/CompanyPages.css';
 
 function Sustainability() {
     const navigate = useNavigate();
     return (
         <div className="company-page">
-            <button
-                className="company-back-btn"
-                onClick={() => navigate('/')}
-            >
-                ← Back
-            </button>
-
-            {/* Hero Banner */}
+            <Breadcrumb />
+            {/* Hero Banner */}}
             <div className="company-hero" style={{ backgroundImage: 'linear-gradient(135deg, #0a2e1a 0%, #1a4a2e 50%, #0a2e1a 100%)' }}>
                 <div className="company-hero-overlay"></div>
                 <div className="company-hero-content">

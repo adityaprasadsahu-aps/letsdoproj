@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import Breadcrumb from '../components/Breadcrumb.jsx';
 import '../styles/CompanyPages.css';
 
 function About() {
@@ -6,14 +7,8 @@ function About() {
 
   return (
     <div className="company-page">
-      <button
-        onClick={() => navigate('/')}
-        style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1000, padding: '10px' }}
-      >
-        Back to Home
-      </button>
-
       <div className="company-content">
+        <Breadcrumb />
         <h1>About Us</h1>
         <p>
           Welcome to our premium watch collection. We are passionate about crafting timeless timepieces that combine

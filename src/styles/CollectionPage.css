@@ -13,14 +13,14 @@
 
 .collection-header h1 {
   font-size: 48px;
-  color: rgb(175, 110, 110);
+  color: #ffffff;
   margin: 0 0 15px 0;
   font-weight: 700;
 }
 
 .collection-header p {
   font-size: 18px;
-  color: #c4c4c4;
+  color: #ffffff;
   margin: 0;
 }
 
@@ -82,7 +82,7 @@
 
 .item-content p {
   font-size: 14px;
-  color: #c4c4c4;
+  color: #ffffff;
   margin: 0 0 20px 0;
   line-height: 1.6;
 }

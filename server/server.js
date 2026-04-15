@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
 const cartRouter = require('./routes/cart');
 
 const app = express();
@@ -64,10 +65,14 @@ const orderSchema = new mongoose.Schema({
 const Order = mongoose.model('Order', orderSchema);
 
 const contactMessageSchema = new mongoose.Schema({
-  name:      { type: String, required: true },
-  email:     { type: String, required: true },
-  message:   { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
+  name:        { type: String, required: true },
+  email:       { type: String, required: true },
+  subject:     { type: String, default: '' },
+  message:     { type: String, required: true },
+  status:      { type: String, default: 'unread' },
+  adminNotes:  { type: String, default: '' },
+  respondedAt: { type: Date, default: null },
+  createdAt:   { type: Date, default: Date.now }
 });
 const ContactMessage = mongoose.model('ContactMessage', contactMessageSchema);
 
@@ -75,6 +80,22 @@ const ContactMessage = mongoose.model('ContactMessage', contactMessageSchema);
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
 app.use('/api/cart', cartRouter);
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER || 'your-email@gmail.com',
+    pass: process.env.GMAIL_PASS || 'your-app-password'
+  }
+});
+
+transporter.verify((error, success) => {
+  if (error) {
+    console.error('Email service configuration error:', error.message);
+  } else {
+    console.log('Email service ready');
+  }
+});
 
 // ─── Health Check ─────────────────────────────────────────────────────────────
 app.get('/', (req, res) => {
@@ -233,12 +254,145 @@ app.get('/api/contact', async (req, res) => {
 
 app.post('/api/contact', async (req, res) => {
   try {
-    const { name, email, message } = req.body;
-    if (!name || !email || !message)
-      return res.status(400).json({ error: 'Name, email, and message are required' });
-    const contactMessage = new ContactMessage({ name, email, message });
+    const { name, email, subject, message } = req.body;
+    if (!name || !email || !subject || !message)
+      return res.status(400).json({ error: 'Name, email, subject, and message are required' });
+
+    const contactMessage = new ContactMessage({
+      name,
+      email,
+      subject,
+      message,
+      status: 'unread',
+      adminNotes: '',
+      respondedAt: null
+    });
     await contactMessage.save();
+
+    const customerEmailOptions = {
+      from: process.env.GMAIL_USER || 'noreply@chronos.com',
+      to: email,
+      subject: `CHRONOS: We received your message — ${subject || 'No subject'}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <header style="background: #0f172a; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
+            <h1 style="margin: 0; font-size: 24px;">CHRONOS</h1>
+            <p style="margin: 8px 0 0; opacity: 0.8;">Your message has been received</p>
+          </header>
+          <main style="padding: 30px; background: #f8f8f8; color: #333;">
+            <h2 style="margin-top: 0;">Thank you, ${name}.</h2>
+            <p>We received your request and will reply as soon as possible.</p>
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;" />
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+              <tr>
+                <td style="padding: 10px; background: #eaeaea; font-weight: bold; width: 120px;">Subject:</td>
+                <td style="padding: 10px; background: #f8f8f8;">${subject || 'No subject provided'}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; background: #eaeaea; font-weight: bold; vertical-align: top;">Message:</td>
+                <td style="padding: 10px; background: #f8f8f8; white-space: pre-wrap;">${message}</td>
+              </tr>
+            </table>
+            <p style="margin-top: 20px; color: #666;">If you did not submit this request, please contact us immediately.</p>
+          </main>
+          <footer style="background: #0f172a; color: white; padding: 20px; text-align: center; border-radius: 0 0 8px 8px; font-size: 12px;">
+            <p style="margin: 0; opacity: 0.8;">CHRONOS WATCHES</p>
+          </footer>
+        </div>
+      `
+    };
+
+    const adminEmailOptions = {
+      from: process.env.GMAIL_USER || 'noreply@chronos.com',
+      to: 'adityapstemp@gmail.com',
+      subject: `[NEW] Contact form submission: ${subject || 'No subject'}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto;">
+          <header style="background: #e45000; color: white; padding: 15px; text-align: center; border-radius: 8px 8px 0 0;">
+            <h2 style="margin: 0;">New Contact Message</h2>
+          </header>
+          <main style="padding: 20px; background: #f8f8f8; border: 1px solid #ddd;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 10px; font-weight: bold; background: #e8f4f8; border: 1px solid #ddd; width: 120px;">Name:</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${name}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; font-weight: bold; background: #e8f4f8; border: 1px solid #ddd;">Email:</td>
+                <td style="padding: 10px; border: 1px solid #ddd"><a href="mailto:${email}">${email}</a></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; font-weight: bold; background: #e8f4f8; border: 1px solid #ddd;">Subject:</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${subject || 'No subject provided'}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; font-weight: bold; background: #e8f4f8; border: 1px solid #ddd; vertical-align: top;">Message:</td>
+                <td style="padding: 10px; border: 1px solid #ddd; white-space: pre-wrap;">${message}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; font-weight: bold; background: #e8f4f8; border: 1px solid #ddd;">Received:</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${new Date().toLocaleString()}</td>
+              </tr>
+            </table>
+          </main>
+        </div>
+      `
+    };
+
+    transporter.sendMail(customerEmailOptions, (err, info) => {
+      if (err) {
+        console.error('Error sending customer confirmation email:', err.message);
+      } else {
+        console.log('Customer confirmation email sent:', info.messageId);
+      }
+    });
+
+    transporter.sendMail(adminEmailOptions, (err, info) => {
+      if (err) {
+        console.error('Error sending admin email:', err.message);
+      } else {
+        console.log('Admin notification email sent:', info.messageId);
+      }
+    });
+
     res.status(201).json({ message: 'Contact message sent successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.put('/api/contact/mark-all-read', async (req, res) => {
+  try {
+    const now = new Date();
+    const result = await ContactMessage.updateMany(
+      { $or: [ { status: { $ne: 'read' } }, { respondedAt: null } ] },
+      { status: 'read', respondedAt: now }
+    );
+    res.json({ modifiedCount: result.modifiedCount || 0 });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.put('/api/contact/:id', async (req, res) => {
+  try {
+    const { status } = req.body;
+    if (!['unread', 'read', 'responded'].includes(status)) {
+      return res.status(400).json({ error: 'Invalid status value' });
+    }
+
+    const update = { status };
+    if (status === 'responded') {
+      update.respondedAt = new Date();
+    }
+    if (status === 'unread') {
+      update.respondedAt = null;
+    }
+
+    const message = await ContactMessage.findByIdAndUpdate(req.params.id, update, { new: true });
+    if (!message) return res.status(404).json({ error: 'Message not found' });
+
+    res.json(message);
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }
@@ -248,7 +402,12 @@ app.post('/api/contact', async (req, res) => {
 app.get('/api/products', async (req, res) => {
   try {
     const { series } = req.query;
-    const filter = series ? { seriesKey: series.toLowerCase() } : {};
+    const filter = series ? {
+      $or: [
+        { seriesKey: series.toLowerCase() },
+        { series: { $regex: new RegExp(`^${series}$`, 'i') } }
+      ]
+    } : {};
     const products = await Product.find(filter).sort({ seriesKey: 1, id: 1 });
     res.json(products);
   } catch (err) {
@@ -258,7 +417,12 @@ app.get('/api/products', async (req, res) => {
 
 app.post('/api/products', async (req, res) => {
   try {
-    const product = new Product(req.body);
+    const payload = {
+      ...req.body,
+      seriesKey: req.body.seriesKey ? req.body.seriesKey.toLowerCase() : req.body.series?.toLowerCase() || '',
+      series: req.body.series ? req.body.series : req.body.seriesKey ? req.body.seriesKey.charAt(0).toUpperCase() + req.body.seriesKey.slice(1) : ''
+    };
+    const product = new Product(payload);
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -268,7 +432,16 @@ app.post('/api/products', async (req, res) => {
 
 app.put('/api/products/:mongoId', async (req, res) => {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.mongoId, req.body, { new: true });
+    const payload = {
+      ...req.body,
+      seriesKey: req.body.seriesKey ? req.body.seriesKey.toLowerCase() : req.body.series?.toLowerCase() || undefined,
+      series: req.body.series ? req.body.series : req.body.seriesKey ? req.body.seriesKey.charAt(0).toUpperCase() + req.body.seriesKey.slice(1) : undefined
+    };
+    const updatePayload = { ...payload };
+    if (updatePayload.seriesKey === undefined) delete updatePayload.seriesKey;
+    if (updatePayload.series === undefined) delete updatePayload.series;
+
+    const product = await Product.findByIdAndUpdate(req.params.mongoId, updatePayload, { new: true });
     if (!product) return res.status(404).json({ error: 'Product not found' });
     res.json(product);
   } catch (err) {
@@ -340,9 +513,9 @@ async function seedAdmin() {
     if (admin && !admin.isAdmin) {
       admin.isAdmin = true;
       await admin.save();
-      console.log('  ✅ adityapstemp@gmail.com promoted to Admin');
+      console.log('   adityapstemp@gmail.com promoted to Admin');
     } else if (!admin) {
-      console.log('  ℹ️  Admin user (adityapstemp@gmail.com) not registered yet — will be Admin on first registration.');
+      console.log('   Admin user (adityapstemp@gmail.com) not registered yet — will be Admin on first registration.');
     }
   } catch (e) {
     console.error('  seedAdmin error:', e.message);

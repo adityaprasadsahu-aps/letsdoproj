@@ -15,13 +15,6 @@ function Collections() {
 
   return (
     <div className="company-page">
-      <button
-        onClick={() => navigate('/')}
-        style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1000, padding: '10px' }}
-      >
-        Back to Home
-      </button>
-
       <div className="company-content">
         <h1>Our Collections</h1>
         <p>Explore our diverse range of watch collections, each crafted with precision and passion.</p>

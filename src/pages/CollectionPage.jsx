@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import '../styles/CollectionPage.css';
+import Breadcrumb from '../components/Breadcrumb.jsx';
 
 function CollectionPage() {
   const navigate = useNavigate();
@@ -56,13 +57,8 @@ function CollectionPage() {
 
   return (
     <div>
-      <button
-        onClick={() => navigate('/')}
-        style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1000, padding: '10px' }}
-      >
-        Back
-      </button>
       <div className="collection-page-container">
+        <Breadcrumb />
         <div className="collection-header">
           <h1>Our Collections</h1>
           <p>Discover the finest timepieces from CHRONOS</p>

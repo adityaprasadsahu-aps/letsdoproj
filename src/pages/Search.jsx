@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search as SearchIcon, ShoppingBag } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+import Breadcrumb from '../components/Breadcrumb.jsx';
 import '../styles/SeriesPage.css';
 
 function SearchPage() {
@@ -40,13 +41,6 @@ function SearchPage() {
 
   return (
     <div>
-      <button
-        onClick={() => navigate('/')}
-        style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1000, padding: '10px' }}
-      >
-        Back to Home
-      </button>
-
       {/* Floating Cart Button */}
       <button className="floating-cart-btn" onClick={() => navigate('/cart')}>
         <ShoppingBag size={22} />
@@ -54,6 +48,7 @@ function SearchPage() {
       </button>
 
       <div className="collection-detail-container">
+        <Breadcrumb />
         <div className="collection-detail-header">
           <h1>Search Products</h1>
           <div style={{ marginTop: '20px', maxWidth: '400px' }}>

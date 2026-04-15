@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import Breadcrumb from '../components/Breadcrumb.jsx';
 import '../styles/CompanyPages.css';
 
 function Terms() {
@@ -6,12 +7,7 @@ function Terms() {
 
   return (
     <div className="company-page">
-      <button
-        onClick={() => navigate('/')}
-        style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1000, padding: '10px' }}
-      >
-        Back to Home
-      </button>
+      <Breadcrumb />
 
       <div className="company-content">
         <h1>Terms of Service</h1>

@@ -33,12 +33,7 @@ function App() {
       <Route path="/register" element={<RegistrationForm />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/collections" element={<CollectionPage />} />
-      <Route path="/collections/classic"   element={<SeriesPage seriesKey="classic" />} />
-      <Route path="/collections/explorer"  element={<SeriesPage seriesKey="explorer" />} />
-      <Route path="/collections/signature" element={<SeriesPage seriesKey="signature" />} />
-      <Route path="/collections/heritage"  element={<SeriesPage seriesKey="heritage" />} />
-      <Route path="/collections/luxury"    element={<SeriesPage seriesKey="luxury" />} />
-      <Route path="/collections/limited"   element={<SeriesPage seriesKey="limited" />} />
+      <Route path="/collections/:series" element={<SeriesPage />} />
       <Route path="/product/:series/:productId" element={<ProductDetail />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/our-story" element={<OurStory />} />

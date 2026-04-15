@@ -1,18 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import Breadcrumb from '../components/Breadcrumb.jsx';
 import '../styles/CompanyPages.css';
 
 function Careers() {
     const navigate = useNavigate();
     return (
         <div className="company-page">
-            <button
-                className="company-back-btn"
-                onClick={() => navigate('/')}
-            >
-                ← Back
-            </button>
-
+            <Breadcrumb />
             {/* Hero Banner */}
             <div className="company-hero" style={{ backgroundImage: 'linear-gradient(135deg, #1a1a2e 0%, #2d2d4e 50%, #1a1a2e 100%)' }}>
                 <div className="company-hero-overlay"></div>

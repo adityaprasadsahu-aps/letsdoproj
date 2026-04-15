@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, User, ShoppingBag } from 'lucide-react';
 import '../styles/App.css';
 import SlidingDashboard from './SlidingDashboard.jsx';
 import CountdownTimer from './CountdownTimer.jsx';
+import Breadcrumb from '../components/Breadcrumb.jsx';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -12,6 +13,7 @@ function Home() {
     const [dashboardOpen, setDashboardOpen] = useState(false);
     const [showProductMenu, setShowProductMenu] = useState(false);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
+    const [saleOffers, setSaleOffers] = useState([]);
     const { totalItems } = useCart();
     const { isLoggedIn, user, logout } = useAuth();
 
@@ -23,6 +25,20 @@ function Home() {
         { name: 'Luxury Collection', path: '/collections/luxury' },
         { name: 'Limited Edition', path: '/collections/limited' }
     ];
+
+    useEffect(() => {
+        const loadOffers = async () => {
+            try {
+                const res = await fetch('http://localhost:5000/api/offers');
+                if (!res.ok) throw new Error('Failed to load offers');
+                const data = await res.json();
+                setSaleOffers(data || []);
+            } catch (err) {
+                console.error('Error fetching sale offers:', err);
+            }
+        };
+        loadOffers();
+    }, []);
 
     return (
         <div className="App">
@@ -37,54 +53,58 @@ function Home() {
 
             <header>
                 <div className="nav">
-                    <button
-                        className={`hamburger-btn ${dashboardOpen ? 'active' : ''}`}
-                        onClick={() => setDashboardOpen(!dashboardOpen)}
-                    >
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </button>
-
-                    <div className="logo">CHRONOS</div>
-
-                    <nav className="nav-links">
-                        <div
-                            className="nav-item"
-                            onMouseEnter={() => setShowProductMenu(true)}
-                            onMouseLeave={() => setShowProductMenu(false)}
+                    <div className="nav-left">
+                        <button
+                            className={`hamburger-btn ${dashboardOpen ? 'active' : ''}`}
+                            onClick={() => setDashboardOpen(!dashboardOpen)}
+                            aria-label="Toggle Menu"
                         >
-                            <a href="/" className="nav-link-item">PRODUCTS</a>
-                            {showProductMenu && (
-                                <div className="dropdown-menu">
-                                    {collections.map((collection, index) => (
-                                        <div
-                                            key={index}
-                                            className="dropdown-item"
-                                            onClick={() => {
-                                                console.log(`Navigating to ${collection.name}`);
-                                                setShowProductMenu(false);
-                                                navigate(collection.path);
-                                            }}
-                                        >
-                                            {collection.name}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                        <div className="nav-item">
-                            <a href="#" className="nav-link-item" onClick={(e) => {e.preventDefault(); navigate('/store');}}>STORE</a>
-                        </div>
-                        <div className="nav-item">
-                            <a href="#" className="nav-link-item" onClick={(e) => {e.preventDefault(); navigate('/about');}}>ABOUT</a>
-                        </div>
-                        <div className="nav-item">
-                            <a href="#" className="nav-link-item" onClick={(e) => {e.preventDefault(); navigate('/contact');}}>CONTACT</a>
-                        </div>
-                    </nav>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
+                        <div className="logo">CHRONOS</div>
+                    </div>
 
-                    <div className="nav-icons" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <div className="nav-center">
+                        <nav className="nav-links">
+                            <div
+                                className="nav-item"
+                                onMouseEnter={() => setShowProductMenu(true)}
+                                onMouseLeave={() => setShowProductMenu(false)}
+                            >
+                                <a href="/" className="nav-link-item" onClick={(e) => { e.preventDefault(); navigate('/collections'); }}>PRODUCTS</a>
+                                {showProductMenu && (
+                                    <div className="dropdown-menu">
+                                        {collections.map((collection, index) => (
+                                            <div
+                                                key={index}
+                                                className="dropdown-item"
+                                                onClick={() => {
+                                                    console.log(`Navigating to ${collection.name}`);
+                                                    setShowProductMenu(false);
+                                                    navigate(collection.path);
+                                                }}
+                                            >
+                                                {collection.name}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            <div className="nav-item">
+                                <a href="#" className="nav-link-item" onClick={(e) => { e.preventDefault(); navigate('/store'); }}>STORE</a>
+                            </div>
+                            <div className="nav-item">
+                                <a href="#" className="nav-link-item" onClick={(e) => { e.preventDefault(); navigate('/about'); }}>ABOUT</a>
+                            </div>
+                            <div className="nav-item">
+                                <a href="#" className="nav-link-item" onClick={(e) => { e.preventDefault(); navigate('/contact'); }}>CONTACT</a>
+                            </div>
+                        </nav>
+                    </div>
+
+                    <div className="nav-right">
                         <Search className="icon-hover" size={20} onClick={() => navigate('/search')} />
 
                         {isLoggedIn ? (
@@ -158,6 +178,9 @@ function Home() {
                         </div>
                     </div>
                 </div>
+                <div className="header-bottom">
+                    <Breadcrumb />
+                </div>
             </header>
 
             <section className="hero">
@@ -192,6 +215,20 @@ function Home() {
                             <button onClick={() => navigate('/collections')} className="btn">SHOP NOW</button>
                         </div>
                     </div>
+                    {saleOffers.length > 0 && (
+                        <div className="sale-offers-grid">
+                            {saleOffers.map((offer) => (
+                                <div key={offer._id} className="sale-offer-card" onClick={() => offer.buttonLink && navigate(offer.buttonLink)}>
+                                    {offer.imageUrl && <img src={offer.imageUrl} alt={offer.title} className="sale-offer-image" />}
+                                    <div className="sale-offer-text">
+                                        <h4>{offer.title}</h4>
+                                        <p>{offer.subtitle}</p>
+                                        {offer.discount && <span className="sale-offer-discount">{offer.discount}</span>}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </section>
             <section className="section">

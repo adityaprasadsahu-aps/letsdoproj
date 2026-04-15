@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Trash2, ArrowLeft, Plus, Minus } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+import Breadcrumb from '../components/Breadcrumb.jsx';
 import '../styles/Cart.css';
 
 function Cart() {
@@ -15,14 +16,8 @@ function Cart() {
 
   return (
     <div className="cart-container">
+      <Breadcrumb />
       <div className="cart-header">
-        <button
-          onClick={() => navigate(-1)}
-          className="back-btn"
-        >
-          <ArrowLeft size={20} />
-          Continue Shopping
-        </button>
         <h1>Shopping Cart</h1>
         <div style={{ width: '120px' }}></div>
       </div>

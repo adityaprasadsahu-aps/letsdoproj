@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ShoppingBag } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+import Breadcrumb from '../components/Breadcrumb.jsx';
 import '../styles/SeriesPage.css';
 
 const SERIES_META = {
@@ -13,37 +14,44 @@ const SERIES_META = {
   limited:   { label: 'Limited Edition',   subtitle: 'Rare, numbered collector pieces' },
 };
 
-function SeriesPage({ seriesKey }) {
+function SeriesPage() {
   const navigate = useNavigate();
+  const { series } = useParams();
+  const seriesKey = series?.toLowerCase();
   const { addToCart, totalItems } = useCart();
   const [watches, setWatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const meta = SERIES_META[seriesKey] || { label: seriesKey, subtitle: '' };
+  const meta = SERIES_META[seriesKey] || { label: seriesKey || 'Series', subtitle: '' };
 
   useEffect(() => {
+    const currentSeries = seriesKey;
+    if (!currentSeries) {
+      setError('Series not found');
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError('');
-    fetch(`http://localhost:5000/api/products?series=${seriesKey}`)
+    fetch(`http://localhost:5000/api/products?series=${currentSeries}`)
       .then(r => r.json())
       .then(data => {
-        if (Array.isArray(data)) setWatches(data);
-        else setError('Failed to load products.');
+        if (Array.isArray(data)) {
+          setWatches(data);
+        } else {
+          setError('Failed to load products.');
+        }
       })
-      .catch(() => setError('Cannot connect to server.'))
+      .catch(() => {
+        setError('Cannot connect to server.');
+      })
       .finally(() => setLoading(false));
   }, [seriesKey]);
 
   return (
     <div>
-      <button
-        onClick={() => navigate('/collections')}
-        style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1000, padding: '10px' }}
-      >
-        Back to Collections
-      </button>
-
       {/* Floating Cart Button */}
       <button className="floating-cart-btn" onClick={() => navigate('/cart')}>
         <ShoppingBag size={22} />
@@ -51,6 +59,7 @@ function SeriesPage({ seriesKey }) {
       </button>
 
       <div className="collection-detail-container">
+        <Breadcrumb />
         <div className="collection-detail-header">
           <h1>{meta.label}</h1>
           <p>{meta.subtitle}</p>
@@ -93,7 +102,7 @@ function SeriesPage({ seriesKey }) {
                     addToCart({
                       id: watch.id,
                       name: watch.name,
-                      series: watch.seriesKey,
+                      series: seriesKey,
                       price: parseFloat(String(watch.price).replace(/[^0-9.]/g, '')),
                       image: watch.image,
                     });

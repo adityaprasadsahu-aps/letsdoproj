@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import Breadcrumb from '../components/Breadcrumb.jsx';
 import '../styles/Login.css';
 
 function LoginForm() {
@@ -65,12 +66,7 @@ function LoginForm() {
 
     return (
         <div>
-            <button
-                onClick={() => navigate('/')}
-                style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1000, padding: '10px' }}
-            >
-                Back
-            </button>
+            <Breadcrumb />
             <div className="login-container">
                 <div className="login-card">
                     {!showForgotPassword ? (

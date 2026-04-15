@@ -17,14 +17,14 @@
 
 .collection-detail-header h1 {
   font-size: 3em;
-  color: #eaab6d;
+  color: #ffffff;
   margin-bottom: 10px;
   letter-spacing: 2px;
 }
 
 .collection-detail-header p {
   font-size: 1.2em;
-  color: #e99567;
+  color: #ffffff;
   margin: 0;
   font-weight: 300;
 }
@@ -71,7 +71,7 @@
 .watch-card h3 {
   padding: 20px 15px 10px;
   font-size: 1.1em;
-  color: #edb593;
+  color: #ffffff;
   text-align: center;
   margin: 0;
   flex-grow: 1;

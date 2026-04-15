@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingBag } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+import Breadcrumb from '../components/Breadcrumb.jsx';
 import '../styles/SeriesPage.css';
 
 function NewArrivals() {
@@ -29,13 +30,6 @@ function NewArrivals() {
 
   return (
     <div>
-      <button
-        onClick={() => navigate('/')}
-        style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1000, padding: '10px' }}
-      >
-        Back to Home
-      </button>
-
       {/* Floating Cart Button */}
       <button className="floating-cart-btn" onClick={() => navigate('/cart')}>
         <ShoppingBag size={22} />
@@ -43,6 +37,7 @@ function NewArrivals() {
       </button>
 
       <div className="collection-detail-container">
+        <Breadcrumb />
         <div className="collection-detail-header">
           <h1>New Arrivals</h1>
           <p>Discover our latest timepieces</p>

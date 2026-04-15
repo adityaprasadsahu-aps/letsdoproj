@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingBag } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+import Breadcrumb from '../components/Breadcrumb.jsx';
 import '../styles/SeriesPage.css'; // Reuse the same CSS
 
 const SERIES_OPTIONS = [
@@ -22,7 +23,7 @@ function Store() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedSeries, setSelectedSeries] = useState('');
-  const [sortBy, setSortBy] = useState('name'); // name, price-low, price-high
+  const [sortBy, setSortBy] = useState('name');
 
   useEffect(() => {
     setLoading(true);
@@ -56,13 +57,6 @@ function Store() {
 
   return (
     <div>
-      <button
-        onClick={() => navigate('/')}
-        style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1000, padding: '10px' }}
-      >
-        Back to Home
-      </button>
-
       {/* Floating Cart Button */}
       <button className="floating-cart-btn" onClick={() => navigate('/cart')}>
         <ShoppingBag size={22} />
@@ -70,6 +64,7 @@ function Store() {
       </button>
 
       <div className="collection-detail-container">
+        <Breadcrumb />
         <div className="collection-detail-header">
           <h1>Our Store</h1>
           <p>Discover all our timepieces</p>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Breadcrumb from '../components/Breadcrumb.jsx';
 import '../styles/Register.css';
 
 function RegistrationForm() {
@@ -88,12 +89,7 @@ function RegistrationForm() {
 
     return (
         <div>
-            <button
-                onClick={() => navigate('/')}
-                style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1000, padding: '10px' }}
-            >
-                Back
-            </button>
+            <Breadcrumb />
             <div className="registration-container">
                 <div className="registration-card">
                     <h2 className="registration-title">Create Your Account</h2>

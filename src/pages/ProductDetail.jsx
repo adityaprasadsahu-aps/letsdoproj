@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ShoppingCart, ArrowLeft, Star } from 'lucide-react';
+import { ShoppingCart, ArrowLeft } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+import Breadcrumb from '../components/Breadcrumb.jsx';
 import '../styles/ProductDetail.css';
 
 function ProductDetail() {
@@ -42,7 +43,6 @@ function ProductDetail() {
     return (
       <div className="product-not-found">
         <h2>{error || 'Product not found'}</h2>
-        <button onClick={() => navigate('/collections')}>Back to Collections</button>
       </div>
     );
   }
@@ -59,14 +59,7 @@ function ProductDetail() {
 
   return (
     <div className="product-detail-container">
-      <button
-        className="back-btn"
-        onClick={() => navigate(`/collections/${series?.toLowerCase()}`)}
-      >
-        <ArrowLeft size={20} />
-        Back to {product.series}
-      </button>
-
+      <Breadcrumb />
       <div className="product-detail-wrapper">
         {/* Left Section — Image & Similar Products */}
         <div className="product-image-section">
@@ -106,20 +99,6 @@ function ProductDetail() {
         <div className="product-details-section">
           <h1 className="product-name">{product.name}</h1>
 
-          <div className="rating-section">
-            <div className="stars">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  size={18}
-                  className={i < Math.floor(product.rating) ? 'star-filled' : 'star-empty'}
-                  fill={i < Math.floor(product.rating) ? '#FFD700' : 'none'}
-                />
-              ))}
-              <span className="rating-value">{product.rating}</span>
-            </div>
-            <span className="review-count">({product.reviews} reviews)</span>
-          </div>
 
           <p className="product-description">{product.description}</p>
 

@@ -1,0 +1,38 @@
+/* Breadcrumbs */
+.breadcrumbs {
+  color: white;
+  font-size: 12px;
+  font-weight: 400;
+  margin: 0 0 20px 0;
+  padding: 15px 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+}
+
+.breadcrumb-link {
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.3s;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 400;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+}
+
+.breadcrumb-link:hover {
+  color: white;
+}
+
+.breadcrumb-current {
+  color: white;
+  font-weight: 500;
+}
+
+.breadcrumb-separator {
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 4px;
+}
