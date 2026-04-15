@@ -258,6 +258,24 @@
 }
 
 .admin-offer-info { flex: 1; }
+
+/* ── Status Indicators ──────────────────────────────────────────────────────── */
+.admin-status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.admin-status.active {
+  background: #0f5a0f;
+  color: #4ade80;
+}
+.admin-status.inactive {
+  background: #3a1a1a;
+  color: #f87171;
+}
 .admin-offer-title    { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
 .admin-offer-sub      { font-size: 13px; color: #888; margin-bottom: 4px; }
 .admin-offer-discount { display: inline-block; background: rgba(228, 80, 0, 0.15); color: #e45000; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; margin-bottom: 4px; }

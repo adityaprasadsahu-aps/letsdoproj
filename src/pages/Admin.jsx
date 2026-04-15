@@ -65,6 +65,18 @@ function Admin() {
   const [messages, setMessages] = useState([]);
   const [messagesLoading, setMessagesLoading] = useState(true);
 
+  // ─── Countdown Timers ─────────────────────────────────────────────────────────
+  const [countdownTimers, setCountdownTimers] = useState([]);
+  const [countdownModal, setCountdownModal] = useState(false);
+  const [editCountdown, setEditCountdown] = useState(null);
+  const [countdownForm, setCountdownForm] = useState({
+    title: '',
+    description: '',
+    endTime: '',
+    isActive: true
+  });
+  const [countdownMsg, setCountdownMsg] = useState('');
+
   // ─── Auth Guard ───────────────────────────────────────────────────────────────
   useEffect(() => {
     if (!isLoggedIn) { navigate('/login'); return; }
@@ -78,6 +90,7 @@ function Admin() {
     if (activeTab === 'offers')   fetchOffers();
     if (activeTab === 'users')    fetchUsers();
     if (activeTab === 'messages') fetchMessages();
+    if (activeTab === 'countdown') fetchCountdownTimers();
   }, [activeTab, isAdmin]);
 
   const fetchProducts = async () => {
@@ -130,6 +143,95 @@ function Admin() {
       }
     } catch (err) {
       console.error('Failed to update status', err);
+    }
+  };
+
+  const deleteMessage = async (messageId) => {
+    if (!window.confirm('Are you sure you want to delete this message? This action cannot be undone.')) {
+      return;
+    }
+    try {
+      const res = await fetch(`${API}/contact/${messageId}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        fetchMessages();
+      } else {
+        console.error('Failed to delete message', await res.text());
+      }
+    } catch (err) {
+      console.error('Failed to delete message', err);
+    }
+  };
+
+  // ─── Countdown Timer CRUD ─────────────────────────────────────────────────────
+  const fetchCountdownTimers = async () => {
+    try {
+      const res = await fetch(`${API}/countdown/all`);
+      setCountdownTimers(await res.json());
+    } catch {
+      setCountdownTimers([]);
+    }
+  };
+
+  const saveCountdownTimer = async (e) => {
+    e.preventDefault();
+    setCountdownMsg('Saving...');
+    try {
+      const method = editCountdown ? 'PUT' : 'POST';
+      const url = editCountdown ? `${API}/countdown/${editCountdown._id}` : `${API}/countdown`;
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(countdownForm)
+      });
+      if (res.ok) {
+        setCountdownMsg('Timer saved successfully!');
+        setCountdownModal(false);
+        setEditCountdown(null);
+        setCountdownForm({ title: '', description: '', endTime: '', isActive: true });
+        fetchCountdownTimers();
+        setTimeout(() => setCountdownMsg(''), 3000);
+      } else {
+        setCountdownMsg('Failed to save timer');
+      }
+    } catch {
+      setCountdownMsg('Error saving timer');
+    }
+  };
+
+  const openAddCountdown = () => {
+    setEditCountdown(null);
+    setCountdownForm({ title: '', description: '', endTime: '', isActive: true });
+    setCountdownMsg('');
+    setCountdownModal(true);
+  };
+
+  const openEditCountdown = (timer) => {
+    setEditCountdown(timer);
+    setCountdownForm({
+      title: timer.title,
+      description: timer.description,
+      endTime: new Date(timer.endTime).toISOString().slice(0, 16),
+      isActive: timer.isActive
+    });
+    setCountdownMsg('');
+    setCountdownModal(true);
+  };
+
+  const deleteCountdownTimer = async (timerId) => {
+    if (!window.confirm('Are you sure you want to delete this countdown timer?')) {
+      return;
+    }
+    try {
+      const res = await fetch(`${API}/countdown/${timerId}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        fetchCountdownTimers();
+      }
+    } catch (err) {
+      console.error('Failed to delete timer', err);
     }
   };
 
@@ -286,6 +388,7 @@ function Admin() {
             { id: 'offers',   icon: '🏷️',  label: 'Banners & Offers' },
             { id: 'users',    icon: '👥', label: 'Users' },
             { id: 'messages', icon: '💬', label: 'Contact Messages' },
+            { id: 'countdown', icon: '⏰', label: 'Countdown Timer' },
           ].map(t => (
             <button
               key={t.id}
@@ -487,7 +590,7 @@ function Admin() {
                 <table className="admin-table">
                   <thead>
                     <tr>
-                      <th>Name</th><th>Email</th><th>Subject</th><th>Status</th><th>Message</th><th>Date</th>
+                      <th>Name</th><th>Email</th><th>Subject</th><th>Status</th><th>Message</th><th>Date</th><th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -509,15 +612,84 @@ function Admin() {
                         </td>
                         <td style={{ maxWidth: '260px', wordWrap: 'break-word' }}>{m.message}</td>
                         <td>{new Date(m.createdAt).toLocaleString()}</td>
+                        <td>
+                          <button
+                            onClick={() => deleteMessage(m._id)}
+                            className="admin-delete-btn"
+                            title="Delete message"
+                          >
+                            🗑️
+                          </button>
+                        </td>
                       </tr>
                     ))}
                     {messages.length === 0 && (
-                      <tr><td colSpan="4" className="admin-empty-row">No messages yet.</td></tr>
+                      <tr><td colSpan="7" className="admin-empty-row">No messages yet.</td></tr>
                     )}
                   </tbody>
                 </table>
               </div>
             )}
+          </div>
+        )}
+
+        {/* COUNTDOWN TIMERS */}
+        {activeTab === 'countdown' && (
+          <div>
+            <div className="admin-section-header">
+              <div>
+                <h1>Countdown Timers</h1>
+                <p className="admin-subtitle">Manage countdown timers for special events</p>
+              </div>
+              <button className="admin-btn-primary" onClick={openAddCountdown}>
+                + Add Timer
+              </button>
+            </div>
+
+            <div className="admin-table-wrapper">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Title</th><th>Description</th><th>End Time</th><th>Status</th><th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {countdownTimers.map(timer => (
+                    <tr key={timer._id}>
+                      <td>{timer.title}</td>
+                      <td>{timer.description || 'No description'}</td>
+                      <td>{new Date(timer.endTime).toLocaleString()}</td>
+                      <td>
+                        <span className={`admin-status ${timer.isActive ? 'active' : 'inactive'}`}>
+                          {timer.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="admin-actions">
+                          <button
+                            onClick={() => openEditCountdown(timer)}
+                            className="admin-btn-edit"
+                            title="Edit timer"
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            onClick={() => deleteCountdownTimer(timer._id)}
+                            className="admin-btn-delete"
+                            title="Delete timer"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {countdownTimers.length === 0 && (
+                    <tr><td colSpan="5" className="admin-empty-row">No countdown timers yet.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </main>
@@ -626,6 +798,56 @@ function Admin() {
             {offMsg && <p className={offMsg.startsWith('✅') ? 'admin-success' : 'admin-error'}>{offMsg}</p>}
             <button type="submit" className="admin-btn-primary" style={{ width: '100%' }}>
               {editOffer ? 'Update Banner' : 'Add Banner'}
+            </button>
+          </form>
+        </Modal>
+      )}
+
+      {/* Countdown Timer Modal */}
+      {countdownModal && (
+        <Modal title={editCountdown ? 'Edit Countdown Timer' : 'Add Countdown Timer'} onClose={() => setCountdownModal(false)}>
+          <form onSubmit={saveCountdownTimer} className="admin-modal-form">
+            <div className="admin-field">
+              <label>Title</label>
+              <input
+                value={countdownForm.title}
+                onChange={e => setCountdownForm(f => ({ ...f, title: e.target.value }))}
+                required
+                placeholder="e.g., New Collection Launch"
+              />
+            </div>
+            <div className="admin-field">
+              <label>Description (optional)</label>
+              <textarea
+                value={countdownForm.description}
+                onChange={e => setCountdownForm(f => ({ ...f, description: e.target.value }))}
+                placeholder="Additional details about the countdown..."
+                rows="3"
+              />
+            </div>
+            <div className="admin-field">
+              <label>End Time</label>
+              <input
+                type="datetime-local"
+                value={countdownForm.endTime}
+                onChange={e => setCountdownForm(f => ({ ...f, endTime: e.target.value }))}
+                required
+                min={new Date().toISOString().slice(0, 16)}
+              />
+            </div>
+            <div className="admin-field admin-checkbox-field">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={countdownForm.isActive}
+                  onChange={e => setCountdownForm(f => ({ ...f, isActive: e.target.checked }))}
+                />
+                Active (only one active timer shows at a time)
+              </label>
+            </div>
+            {countdownMsg && <p className={countdownMsg.startsWith('Timer saved') ? 'admin-success' : 'admin-error'}>{countdownMsg}</p>}
+            <button type="submit" className="admin-btn-primary" style={{ width: '100%' }}>
+              {editCountdown ? 'Update Timer' : 'Add Timer'}
             </button>
           </form>
         </Modal>

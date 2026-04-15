@@ -8,7 +8,7 @@ function OurStory() {
     return (
         <div className="company-page">
             <Breadcrumb />
-            {/* Hero Banner */}}
+            {/* Hero Banner */}
             <div className="company-hero" style={{ backgroundImage: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)' }}>
                 <div className="company-hero-overlay"></div>
                 <div className="company-hero-content">

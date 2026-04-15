@@ -3,7 +3,10 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
+const dotenv = require('dotenv');
 const cartRouter = require('./routes/cart');
+
+dotenv.config();
 
 const app = express();
 const PORT = 5000;
@@ -75,6 +78,15 @@ const contactMessageSchema = new mongoose.Schema({
   createdAt:   { type: Date, default: Date.now }
 });
 const ContactMessage = mongoose.model('ContactMessage', contactMessageSchema);
+
+const countdownTimerSchema = new mongoose.Schema({
+  title:       { type: String, required: true },
+  description: { type: String, default: '' },
+  endTime:     { type: Date, required: true },
+  isActive:    { type: Boolean, default: true },
+  createdAt:   { type: Date, default: Date.now }
+});
+const CountdownTimer = mongoose.model('CountdownTimer', countdownTimerSchema);
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
 app.use(cors({ origin: 'http://localhost:3000' }));
@@ -271,7 +283,7 @@ app.post('/api/contact', async (req, res) => {
 
     const customerEmailOptions = {
       from: process.env.GMAIL_USER || 'noreply@chronos.com',
-      to: email,
+      to: [email, process.env.ADMIN_EMAIL || 'adityapstemp@gmail.com'], // Send to both customer and admin
       subject: `CHRONOS: We received your message — ${subject || 'No subject'}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -341,17 +353,9 @@ app.post('/api/contact', async (req, res) => {
 
     transporter.sendMail(customerEmailOptions, (err, info) => {
       if (err) {
-        console.error('Error sending customer confirmation email:', err.message);
+        console.error('Error sending confirmation emails to customer and admin:', err.message);
       } else {
-        console.log('Customer confirmation email sent:', info.messageId);
-      }
-    });
-
-    transporter.sendMail(adminEmailOptions, (err, info) => {
-      if (err) {
-        console.error('Error sending admin email:', err.message);
-      } else {
-        console.log('Admin notification email sent:', info.messageId);
+        console.log('Confirmation emails sent to customer and admin:', info.messageId);
       }
     });
 
@@ -393,6 +397,17 @@ app.put('/api/contact/:id', async (req, res) => {
     if (!message) return res.status(404).json({ error: 'Message not found' });
 
     res.json(message);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.delete('/api/contact/:id', async (req, res) => {
+  try {
+    const message = await ContactMessage.findByIdAndDelete(req.params.id);
+    if (!message) return res.status(404).json({ error: 'Message not found' });
+
+    res.json({ message: 'Contact message deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }
@@ -506,6 +521,54 @@ app.delete('/api/offers/:id', async (req, res) => {
   }
 });
 
+// ─── Countdown Timer Routes ───────────────────────────────────────────────────
+app.get('/api/countdown', async (req, res) => {
+  try {
+    const timer = await CountdownTimer.findOne({ isActive: true }).sort({ createdAt: -1 });
+    res.json(timer || null);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.get('/api/countdown/all', async (req, res) => {
+  try {
+    const timers = await CountdownTimer.find({}).sort({ createdAt: -1 });
+    res.json(timers);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.post('/api/countdown', async (req, res) => {
+  try {
+    const timer = new CountdownTimer(req.body);
+    await timer.save();
+    res.status(201).json(timer);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.put('/api/countdown/:id', async (req, res) => {
+  try {
+    const timer = await CountdownTimer.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!timer) return res.status(404).json({ error: 'Timer not found' });
+    res.json(timer);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.delete('/api/countdown/:id', async (req, res) => {
+  try {
+    await CountdownTimer.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Countdown timer deleted' });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // ─── Seed Admin ───────────────────────────────────────────────────────────────
 async function seedAdmin() {
   try {
@@ -529,6 +592,7 @@ app.listen(PORT, () => {
   console.log(`  Auth:     POST /api/register | POST /api/login`);
   console.log(`  Products: GET/POST/PUT/DELETE /api/products`);
   console.log(`  Offers:   GET/POST/PUT/DELETE /api/offers`);
+  console.log(`  Countdown: GET/POST/PUT/DELETE /api/countdown`);
   console.log(`  Orders:   GET/POST /api/orders`);
   console.log(`  Users:    GET/PUT/DELETE /api/users\n`);
 });
