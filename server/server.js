@@ -31,8 +31,8 @@ const User = mongoose.model('User', userSchema);
 const productSchema = new mongoose.Schema({
   id:             { type: Number, required: true },
   name:           { type: String, required: true },
-  series:         { type: String, required: true },  // e.g. 'Classic'
-  seriesKey:      { type: String, required: true },  // e.g. 'classic'
+  series:         { type: String, required: true },  
+  seriesKey:      { type: String, required: true },  
   image:          { type: String, default: '' },
   price:          { type: String, required: true },
   rating:         { type: Number, default: 4.5 },
