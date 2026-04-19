@@ -459,8 +459,8 @@ function Admin() {
                       <tr key={o._id}>
                         <td>...{o._id.slice(-6)}</td>
                         <td>...{o.userId.slice(-6)}</td>
-                        <td>{o.items.length} items (x{o.items.reduce((s, i) => s + i.quantity, 0)})</td>
-                        <td>${o.total.toFixed(2)}</td>
+                        <td>{o.items?.length || 0} items (x{o.items?.reduce((s, i) => s + (i.quantity || 1), 0) || 0})</td>
+                        <td>${o.total != null ? Number(o.total).toFixed(2) : '0.00'}</td>
                         <td>
                           <select
                             value={o.status || 'Processing'}

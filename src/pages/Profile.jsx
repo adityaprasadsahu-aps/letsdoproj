@@ -223,7 +223,7 @@ function Profile() {
                     />
                   </div>
                 </div>
-                {addrMsg && <p className={addrMsg.includes('✅') ? 'settings-success' : 'settings-error'}>{addrMsg}</p>}
+                {addrMsg && <p className={addrMsg.includes('successfully') ? 'settings-success' : 'settings-error'}>{addrMsg}</p>}
                 <button type="submit" className="profile-btn" disabled={addrLoading}>
                   {addrLoading ? 'Saving...' : 'Save Address'}
                 </button>
