@@ -32,8 +32,12 @@ function Store() {
       .then(r => r.json())
       .then(data => {
         if (Array.isArray(data)) {
-          setWatches(data);
-          setFilteredWatches(data);
+          const normalized = data.map(w => ({
+            ...w,
+            seriesKey: w.seriesKey || (w.series ? w.series.toLowerCase() : '')
+          }));
+          setWatches(normalized);
+          setFilteredWatches(normalized);
         } else setError('Failed to load products.');
       })
       .catch(() => setError('Cannot connect to server.'))

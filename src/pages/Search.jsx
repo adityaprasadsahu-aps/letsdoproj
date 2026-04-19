@@ -19,7 +19,11 @@ function SearchPage() {
       .then(r => r.json())
       .then(data => {
         if (Array.isArray(data)) {
-          setAllProducts(data);
+          const normalized = data.map(w => ({
+            ...w,
+            seriesKey: w.seriesKey || (w.series ? w.series.toLowerCase() : '')
+          }));
+          setAllProducts(normalized);
         } else setError('Failed to load products.');
       })
       .catch(() => setError('Cannot connect to server.'))

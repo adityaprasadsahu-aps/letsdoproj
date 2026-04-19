@@ -124,7 +124,15 @@ function Admin() {
     setProdLoading(true);
     try {
       const res = await fetch(`${API}/products`);
-      setProducts(await res.json());
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setProducts(data.map(w => ({
+          ...w,
+          seriesKey: w.seriesKey || (w.series ? w.series.toLowerCase() : '')
+        })));
+      } else {
+        setProducts([]);
+      }
     } catch { setProducts([]); }
     setProdLoading(false);
   };

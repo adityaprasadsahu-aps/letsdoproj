@@ -22,10 +22,14 @@ function ProductDetail() {
       .then(r => r.json())
       .then(data => {
         if (!Array.isArray(data)) { setError('Failed to load products.'); return; }
-        const found = data.find(p => p.id === parseInt(productId));
+        const normalizedData = data.map(w => ({
+          ...w,
+          seriesKey: w.seriesKey || (w.series ? w.series.toLowerCase() : '')
+        }));
+        const found = normalizedData.find(p => p.id === parseInt(productId));
         if (!found) { setError('Product not found.'); return; }
         setProduct(found);
-        setSimilarProducts(data.filter(p => p.id !== parseInt(productId)));
+        setSimilarProducts(normalizedData.filter(p => p.id !== parseInt(productId)));
       })
       .catch(() => setError('Cannot connect to server.'))
       .finally(() => setLoading(false));

@@ -19,8 +19,13 @@ function NewArrivals() {
       .then(r => r.json())
       .then(data => {
         if (Array.isArray(data)) {
+          // Normalize seriesKey if missing
+          const normalized = data.map(w => ({
+            ...w,
+            seriesKey: w.seriesKey || (w.series ? w.series.toLowerCase() : '')
+          }));
           // Sort by createdAt descending to show newest first
-          const sorted = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          const sorted = normalized.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
           setWatches(sorted.slice(0, 12)); // Show latest 12
         } else setError('Failed to load products.');
       })
