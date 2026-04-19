@@ -96,7 +96,7 @@ function Profile() {
   return (
     <div className="profile-page">
       <Breadcrumb />
-      {/* Header */}}
+      {/* Header */}
       <div className="profile-header">
         <div className="profile-hero">
           <div className="profile-avatar">
