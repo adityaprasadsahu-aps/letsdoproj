@@ -51,9 +51,9 @@ function Profile() {
       });
       if (!res.ok) throw new Error('Failed to update address');
       updateUser({ address: addressForm });
-      setAddrMsg('✅ Address updated successfully!');
+      setAddrMsg('Address updated successfully!');
     } catch {
-      setAddrMsg('❌ Error updating address');
+      setAddrMsg('Error updating address');
     } finally {
       setAddrLoading(false);
     }
