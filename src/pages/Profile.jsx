@@ -5,7 +5,7 @@ import Breadcrumb from '../components/Breadcrumb.jsx';
 import '../styles/Profile.css';
 
 function Profile() {
-  const { user, isLoggedIn, logout } = useAuth();
+  const { user, isLoggedIn, logout, updateUser } = useAuth();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState('orders');
@@ -16,6 +16,10 @@ function Profile() {
   const [pwError, setPwError] = useState('');
   const [pwSuccess, setPwSuccess] = useState('');
   const [pwLoading, setPwLoading] = useState(false);
+
+  const [addressForm, setAddressForm] = useState(user?.address || { street: '', city: '', state: '', zipCode: '' });
+  const [addrMsg, setAddrMsg] = useState('');
+  const [addrLoading, setAddrLoading] = useState(false);
 
   useEffect(() => {
     if (!isLoggedIn) { navigate('/login'); return; }
@@ -32,6 +36,26 @@ function Profile() {
       setOrders([]);
     } finally {
       setOrdersLoading(false);
+    }
+  };
+
+  const handleAddressSave = async (e) => {
+    e.preventDefault();
+    setAddrLoading(true);
+    setAddrMsg('');
+    try {
+      const res = await fetch(`http://localhost:5000/api/users/${user.userId}/address`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address: addressForm })
+      });
+      if (!res.ok) throw new Error('Failed to update address');
+      updateUser({ address: addressForm });
+      setAddrMsg('✅ Address updated successfully!');
+    } catch {
+      setAddrMsg('❌ Error updating address');
+    } finally {
+      setAddrLoading(false);
     }
   };
 
@@ -157,7 +181,56 @@ function Profile() {
         {activeTab === 'settings' && (
           <div className="profile-section">
             <h2>Account Settings</h2>
+
             <div className="settings-card">
+              <h3>Shipping Address</h3>
+              <form onSubmit={handleAddressSave} className="settings-form">
+                <div className="settings-field">
+                  <label>Street Address</label>
+                  <input
+                    type="text"
+                    value={addressForm.street}
+                    onChange={e => setAddressForm(p => ({ ...p, street: e.target.value }))}
+                    placeholder="123 Main St"
+                  />
+                </div>
+                <div style={{ display: 'flex', gap: '15px' }}>
+                  <div className="settings-field" style={{ flex: 1 }}>
+                    <label>City</label>
+                    <input
+                      type="text"
+                      value={addressForm.city}
+                      onChange={e => setAddressForm(p => ({ ...p, city: e.target.value }))}
+                      placeholder="New York"
+                    />
+                  </div>
+                  <div className="settings-field" style={{ flex: 1 }}>
+                    <label>State</label>
+                    <input
+                      type="text"
+                      value={addressForm.state}
+                      onChange={e => setAddressForm(p => ({ ...p, state: e.target.value }))}
+                      placeholder="NY"
+                    />
+                  </div>
+                  <div className="settings-field" style={{ flex: 1 }}>
+                    <label>ZIP Code</label>
+                    <input
+                      type="text"
+                      value={addressForm.zipCode}
+                      onChange={e => setAddressForm(p => ({ ...p, zipCode: e.target.value }))}
+                      placeholder="10001"
+                    />
+                  </div>
+                </div>
+                {addrMsg && <p className={addrMsg.includes('✅') ? 'settings-success' : 'settings-error'}>{addrMsg}</p>}
+                <button type="submit" className="profile-btn" disabled={addrLoading}>
+                  {addrLoading ? 'Saving...' : 'Save Address'}
+                </button>
+              </form>
+            </div>
+
+            <div className="settings-card" style={{ marginTop: '30px' }}>
               <h3>Change Password</h3>
               <form onSubmit={handlePwChange} className="settings-form">
                 <div className="settings-field">

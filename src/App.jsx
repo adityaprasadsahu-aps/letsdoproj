@@ -12,6 +12,7 @@ import Sustainability from './pages/Sustainability.jsx';
 import Careers from './pages/Careers.jsx';
 import ServiceCenters from './pages/ServiceCenters.jsx';
 import Cart from './pages/Cart.jsx';
+import Checkout from './pages/Checkout.jsx';
 import Profile from './pages/Profile.jsx';
 import Admin from './pages/Admin.jsx';
 import Store from './pages/Store.jsx';
@@ -41,6 +42,7 @@ function App() {
       <Route path="/careers" element={<Careers />} />
       <Route path="/service-centers" element={<ServiceCenters />} />
       <Route path="/cart" element={<Cart />} />
+      <Route path="/checkout" element={<Checkout />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/admin" element={<Admin />} />
       <Route path="/store" element={<Store />} />

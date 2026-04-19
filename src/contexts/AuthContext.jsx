@@ -17,10 +17,16 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(loadUser);
 
   // Call this on successful login
-  const login = (userId, fullName, isAdmin = false) => {
-    const userData = { userId, fullName, isAdmin };
+  const login = (userId, fullName, isAdmin = false, address = null) => {
+    const userData = { userId, fullName, isAdmin, address };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
     setUser(userData);
+  };
+
+  const updateUser = (updates) => {
+    const newData = { ...user, ...updates };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
+    setUser(newData);
   };
 
   // Call this on logout
@@ -34,7 +40,7 @@ export function AuthProvider({ children }) {
   const isAdmin = user?.isAdmin === true;
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn, isAdmin, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoggedIn, isAdmin, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

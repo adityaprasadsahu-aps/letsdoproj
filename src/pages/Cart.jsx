@@ -106,7 +106,10 @@ function Cart() {
                 <span>${total.toFixed(2)}</span>
               </div>
               
-              <button className="checkout-btn">
+              <button 
+                className="checkout-btn"
+                onClick={() => navigate('/checkout')}
+              >
                 Proceed to Checkout
               </button>
               

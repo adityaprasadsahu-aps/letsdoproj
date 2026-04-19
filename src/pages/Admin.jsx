@@ -36,7 +36,11 @@ function Modal({ title, children, onClose }) {
 function Admin() {
   const { isLoggedIn, isAdmin, user } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('products');
+  const [activeTab, setActiveTab] = useState('orders'); // default to orders
+
+  // ─── Orders ──────────────────────────────────────────────────────────────────
+  const [orders, setOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(true);
 
   // ─── Products ────────────────────────────────────────────────────────────────
   const [products, setProducts] = useState([]);
@@ -86,12 +90,35 @@ function Admin() {
   // ─── Fetch data on tab switch ─────────────────────────────────────────────────
   useEffect(() => {
     if (!isAdmin) return;
+    if (activeTab === 'orders')   fetchOrders();
     if (activeTab === 'products') fetchProducts();
     if (activeTab === 'offers')   fetchOffers();
     if (activeTab === 'users')    fetchUsers();
     if (activeTab === 'messages') fetchMessages();
     if (activeTab === 'countdown') fetchCountdownTimers();
   }, [activeTab, isAdmin]);
+
+  const fetchOrders = async () => {
+    setOrdersLoading(true);
+    try {
+      const res = await fetch(`${API}/orders`);
+      setOrders(await res.json());
+    } catch { setOrders([]); }
+    setOrdersLoading(false);
+  };
+
+  const updateOrderStatus = async (orderId, status) => {
+    try {
+      const res = await fetch(`${API}/orders/${orderId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      if (res.ok) fetchOrders();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const fetchProducts = async () => {
     setProdLoading(true);
@@ -384,6 +411,7 @@ function Admin() {
         </div>
         <nav className="admin-nav">
           {[
+            { id: 'orders',   icon: '📦', label: 'Orders' },
             { id: 'products', icon: '🕐', label: 'Products' },
             { id: 'offers',   icon: '🏷️',  label: 'Banners & Offers' },
             { id: 'users',    icon: '👥', label: 'Users' },
@@ -407,6 +435,69 @@ function Admin() {
         <div className="admin-main-top">
           <Breadcrumb />
         </div>
+
+        {/* ORDERS */}
+        {activeTab === 'orders' && (
+          <div>
+            <div className="admin-section-header">
+              <div>
+                <h1>Orders</h1>
+                <p className="admin-subtitle">{orders.length} total orders</p>
+              </div>
+            </div>
+
+            {ordersLoading ? <div className="admin-loader">Loading orders…</div> : (
+              <div className="admin-table-wrapper">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Order ID</th><th>Customer ID</th><th>Items</th><th>Total</th><th>Status</th><th>Address</th><th>Payment</th><th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {orders.map(o => (
+                      <tr key={o._id}>
+                        <td>...{o._id.slice(-6)}</td>
+                        <td>...{o.userId.slice(-6)}</td>
+                        <td>{o.items.length} items (x{o.items.reduce((s, i) => s + i.quantity, 0)})</td>
+                        <td>${o.total.toFixed(2)}</td>
+                        <td>
+                          <select
+                            value={o.status || 'Processing'}
+                            onChange={e => updateOrderStatus(o._id, e.target.value)}
+                            className="admin-status-select"
+                          >
+                            <option value="Processing">Processing</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                          </select>
+                        </td>
+                        <td>
+                          {o.shippingAddress ? (
+                            <div style={{fontSize: '12px'}}>
+                              {o.shippingAddress.street}, {o.shippingAddress.city}<br/>
+                              {o.shippingAddress.state} {o.shippingAddress.zipCode}
+                            </div>
+                          ) : 'N/A'}
+                        </td>
+                        <td>
+                          <span className={`admin-badge ${o.paymentMethod === 'UPI' ? 'admin' : ''}`}>
+                            {o.paymentMethod || 'Cash'}
+                          </span>
+                        </td>
+                        <td>{new Date(o.createdAt).toLocaleDateString()}</td>
+                      </tr>
+                    ))}
+                    {orders.length === 0 && (
+                      <tr><td colSpan="8" className="admin-empty-row">No orders found.</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* PRODUCTS */}
         {activeTab === 'products' && (

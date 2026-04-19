@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema({
   email:     { type: String, required: true, unique: true, lowercase: true },
   password:  { type: String, required: true },
   isAdmin:   { type: Boolean, default: false },
+  address:   { type: Object, default: { street: '', city: '', state: '', zipCode: '' } },
   createdAt: { type: Date, default: Date.now }
 });
 const User = mongoose.model('User', userSchema);
@@ -62,6 +63,8 @@ const orderSchema = new mongoose.Schema({
   userId:    { type: String, required: true },
   items:     [{ name: String, series: String, price: Number, quantity: Number, image: String }],
   total:     { type: Number, required: true },
+  shippingAddress: { type: Object, required: true },
+  paymentMethod: { type: String, enum: ['Cash', 'UPI'], default: 'Cash' },
   status:    { type: String, default: 'Processing', enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled'] },
   createdAt: { type: Date, default: Date.now }
 });
@@ -155,7 +158,8 @@ app.post('/api/login', async (req, res) => {
       message: 'Login successful',
       userId:   user._id,
       fullName: user.fullName,
-      isAdmin:  user.isAdmin
+      isAdmin:  user.isAdmin,
+      address:  user.address
     });
   } catch (err) {
     console.error(err);
@@ -218,6 +222,17 @@ app.delete('/api/users/:id', async (req, res) => {
   }
 });
 
+app.put('/api/users/:id/address', async (req, res) => {
+  try {
+    const { address } = req.body;
+    const user = await User.findByIdAndUpdate(req.params.id, { address }, { new: true, select: '-password' });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // ─── Order Routes ─────────────────────────────────────────────────────────────
 app.get('/api/orders', async (req, res) => {
   try {
@@ -232,10 +247,10 @@ app.get('/api/orders', async (req, res) => {
 
 app.post('/api/orders', async (req, res) => {
   try {
-    const { userId, items, total } = req.body;
-    if (!userId || !items || !total)
-      return res.status(400).json({ error: 'userId, items, and total are required' });
-    const order = new Order({ userId, items, total });
+    const { userId, items, total, shippingAddress, paymentMethod } = req.body;
+    if (!userId || !items || !total || !shippingAddress)
+      return res.status(400).json({ error: 'userId, items, total, and shippingAddress are required' });
+    const order = new Order({ userId, items, total, shippingAddress, paymentMethod });
     await order.save();
     res.status(201).json(order);
   } catch (err) {
