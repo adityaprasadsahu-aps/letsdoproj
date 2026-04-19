@@ -432,7 +432,8 @@ footer li:hover {
   align-items: center;
   padding: 24px 20px;
   border-bottom: 2px solid #e45000;
-  background: linear-gradient(135deg, #a34f01 0%, #e45000 100%);
+  background:#1a1a1a;
+  /*background: linear-gradient(135deg, #a34f01 0%, #e45000 100%);*/
 }
 
 .dashboard-header h2 {

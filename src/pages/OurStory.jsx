@@ -112,22 +112,22 @@ function OurStory() {
                         <div className="value-card">
                             <div className="value-icon">⚙️</div>
                             <h3>Precision</h3>
-                            <p>Every CHRONOS movement is tested for 500 hours before leaving our atelier, ensuring accuracy to within ±2 seconds per day.</p>
+                            <p style={{ color: 'black' }}>Every CHRONOS movement is tested for 500 hours before leaving our atelier, ensuring accuracy to within ±2 seconds per day.</p>
                         </div>
                         <div className="value-card">
                             <div className="value-icon">✋</div>
                             <h3>Craftsmanship</h3>
-                            <p>Our master watchmakers dedicate over 200 hours to each timepiece, hand-finishing every surface and assembling each component with care.</p>
+                            <p style={{ color: 'black' }}>Our master watchmakers dedicate over 200 hours to each timepiece, hand-finishing every surface and assembling each component with care.</p>
                         </div>
                         <div className="value-card">
                             <div className="value-icon">💎</div>
                             <h3>Heritage</h3>
-                            <p>We honor 130+ years of tradition while embracing innovation — every new collection carries the DNA of Henri Beaumont's original vision.</p>
+                            <p style={{ color: 'black' }}>We honor 130+ years of tradition while embracing innovation — every new collection carries the DNA of Henri Beaumont's original vision.</p>
                         </div>
                         <div className="value-card">
                             <div className="value-icon">🌍</div>
                             <h3>Sustainability</h3>
-                            <p>A timepiece built to last generations is inherently sustainable. We use responsibly sourced materials and carbon-neutral manufacturing.</p>
+                            <p style={{ color: 'black' }}>A timepiece built to last generations is inherently sustainable. We use responsibly sourced materials and carbon-neutral manufacturing.</p>
                         </div>
                     </div>
                 </section>

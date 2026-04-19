@@ -225,6 +225,7 @@
     padding: 36px 28px;
     text-align: center;
     transition: all 0.3s ease;
+    color: black;
 }
 
 .value-card:hover {
@@ -385,6 +386,10 @@
     gap: 16px;
 }
 
+.position-location{
+    color: #020100;
+}
+
 .position-card {
     display: flex;
     justify-content: space-between;
@@ -407,6 +412,7 @@
     font-size: 18px;
     font-weight: 600;
     margin: 0 0 8px;
+    color: black;
 }
 
 .position-meta {
@@ -422,6 +428,7 @@
     border-radius: 12px;
     color: #a08624;
     font-weight: 500;
+    color:#e45000;
 }
 
 .position-apply-btn {
